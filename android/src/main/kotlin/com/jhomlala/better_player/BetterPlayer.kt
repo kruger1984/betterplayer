@@ -681,7 +681,7 @@ internal class BetterPlayer(
                         }
 
                         override fun getSupportedQueueNavigatorActions(player: Player): Long {
-                            // disable navigator button in notificationL Skip, forward, previous, ...
+                            // disable navigator button in notification: Skip, forward, previous, ...
                             return 0
                         }
                     })
