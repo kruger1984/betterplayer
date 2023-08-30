@@ -679,6 +679,11 @@ internal class BetterPlayer(
                             }
                             return mediaDescriptionCompatBuilder.build()
                         }
+
+                        override fun getSupportedQueueNavigatorActions(player: Player): Long {
+                            // disable navigator button in notificationL Skip, forward, previous, ...
+                            return 0
+                        }
                     })
                 }
             }
