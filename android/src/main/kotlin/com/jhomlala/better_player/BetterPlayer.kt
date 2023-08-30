@@ -635,7 +635,8 @@ internal class BetterPlayer(
     fun setupMediaSession(
         context: Context?,
         title: String = "",
-        author: String = ""
+        author: String = "",
+        bitmap: Bitmap? = null,
     ): MediaSessionCompat? {
         mediaSession?.release()
         context?.let {
@@ -669,8 +670,14 @@ internal class BetterPlayer(
                             val extra = Bundle()
                             extra.putString(MediaMetadataCompat.METADATA_KEY_ARTIST, author)
                             extra.putString(MediaMetadataCompat.METADATA_KEY_TITLE, title)
-                            return MediaDescriptionCompat.Builder().setExtras(extra)
-                                .build()
+                            val mediaDescriptionCompatBuilder = MediaDescriptionCompat.Builder()
+                            mediaDescriptionCompatBuilder.apply {
+                                setExtras(extra)
+                                bitmap?.let {
+                                    setIconBitmap(it)
+                                }
+                            }
+                            return mediaDescriptionCompatBuilder.build()
                         }
                     })
                 }
@@ -827,6 +834,8 @@ internal class BetterPlayer(
         surface?.release()
         exoPlayer?.release()
     }
+    
+    val duration : Long? get() = exoPlayer?.duration
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
