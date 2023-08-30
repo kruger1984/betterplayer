@@ -133,7 +133,10 @@ int _seekPosition;
 
 - (void)itemFailedToPlayToEndTime:(NSNotification*)notification {
     if (_eventSink) {
-        _eventSink(@{@"event" : @"failedToPlayToEndTime", @"key" : _key});
+        _eventSink([FlutterError
+                    errorWithCode:@"VideoError"
+                    message:@"Failed to load video: itemFailedToPlayToEndTime"
+                    details:nil]);
     }
 }
 
