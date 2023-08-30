@@ -9,6 +9,7 @@ buildscript {
     ext.coreVersion = "1.6.0"
     ext.gradleVersion = "7.0.2"
     ext.kotlinVersion = "1.5.31"
+    ext.picassoVersion = "2.8"
 
     repositories {
         google()
@@ -63,7 +64,7 @@ android {
         implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion"
         implementation "androidx.annotation:annotation:$annotationVersion"
         implementation "androidx.work:work-runtime:$workVersion"
-        implementation "com.squareup.picasso:picasso:2.8"
+        implementation "com.squareup.picasso:picasso:$picassoVersion"
     }
 }
 
