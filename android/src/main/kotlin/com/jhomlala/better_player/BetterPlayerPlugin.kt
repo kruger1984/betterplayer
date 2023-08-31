@@ -593,7 +593,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                     bitmap = iconBitmap
                 )
             mediaSession?.let { session ->
-                if (isSamsungDeviceWithAndroidR) {
+                if (BetterPlayerUtilities.isSamsungDeviceWithAndroidR) {
                     // VOD
                     // Samsung devices with android 11 
                     // https://dw-ml-nfc.atlassian.net/browse/DAF-4294
@@ -633,9 +633,6 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             }
         }
     }
-
-    private val isSamsungDeviceWithAndroidR get() =
-        Build.MANUFACTURER.lowercase() == "samsung" && Build.VERSION.SDK_INT == Build.VERSION_CODES.R
 
     private var imageDownloadHandler: Target = object : Target {
         override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
