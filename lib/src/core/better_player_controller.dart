@@ -1239,10 +1239,6 @@ class BetterPlayerController {
         _postEvent(
             BetterPlayerEvent(BetterPlayerEventType.finishedPlayInLooping));
         break;
-      case VideoEventType.failedToPlayToEndTime:
-        _postEvent(
-            BetterPlayerEvent(BetterPlayerEventType.failedToPlayToEndTime));
-        break;
       case VideoEventType.pressedBackToAppButton:
         _postEvent(
             BetterPlayerEvent(BetterPlayerEventType.pressedBackToAppButton));
