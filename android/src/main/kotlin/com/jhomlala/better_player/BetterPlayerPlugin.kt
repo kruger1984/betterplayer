@@ -593,7 +593,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                     bitmap = iconBitmap
                 )
             mediaSession?.let { session ->
-                if (BetterPlayerUtilities.isSamsungDeviceWithAndroidR) {
+                if (DetectingDeviceUtilities.isSamsungDeviceWithAndroidR) {
                     // VOD
                     // Samsung devices with android 11 
                     // https://dw-ml-nfc.atlassian.net/browse/DAF-4294
