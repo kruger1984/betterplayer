@@ -559,8 +559,8 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     return [BetterPlayerTimeUtils FLTCMTimeToMillis:(time)];
 }
 
-// Get DVR video duration. (This is not work for Live point mode.)
-- (int64_t)getDvrDuration {
+// DVR video duration. (This is not work for Live point mode.)
+- (int64_t)dvrDuration {
     CMTimeRange seekableRange = [_player.currentItem.seekableTimeRanges.lastObject CMTimeRangeValue];
     return [BetterPlayerTimeUtils FLTCMTimeToMillis:(seekableRange.duration)];
 }

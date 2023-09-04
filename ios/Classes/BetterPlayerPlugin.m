@@ -513,7 +513,7 @@ bool _isCommandCenterButtonsEnabled = true;
         } else if ([@"absolutePosition" isEqualToString:call.method]) {
             result(@([player absolutePosition]));
         } else if ([@"getDvrDuration" isEqualToString:call.method]) {
-            result(@([player getDvrDuration]));
+            result(@([player dvrDuration]));
         } else if ([@"seekTo" isEqualToString:call.method]) {
             [player seekTo:[argsMap[@"location"] intValue]];
 
