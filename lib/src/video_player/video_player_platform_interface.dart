@@ -133,7 +133,7 @@ abstract class VideoPlayerPlatform {
     throw UnimplementedError('getPosition() has not been implemented.');
   }
 
-  /// Gets duration of the video.
+  /// Gets duration of the DVR video.
   Future<Duration> getDvrDuration(int? textureId) {
     throw UnimplementedError('getDvrDuration() has not been implemented.');
   }
