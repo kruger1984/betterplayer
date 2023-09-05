@@ -623,7 +623,7 @@ internal class BetterPlayer(
         }
     }
 
-    private fun getDuration(): Long = exoPlayer?.duration ?: 0L
+    fun getDuration(): Long = exoPlayer?.duration ?: 0L
 
     /**
      * Create media session which will be used in notifications, pip mode.
@@ -635,7 +635,8 @@ internal class BetterPlayer(
     fun setupMediaSession(
         context: Context?,
         title: String = "",
-        author: String = ""
+        author: String = "",
+        bitmap: Bitmap? = null,
     ): MediaSessionCompat? {
         mediaSession?.release()
         context?.let {
@@ -657,7 +658,7 @@ internal class BetterPlayer(
             mediaSessionConnector = MediaSessionConnector(mediaSession)
             mediaSessionConnector?.apply {
                 setPlayer(exoPlayer)
-                if (Build.MANUFACTURER.lowercase() == "samsung" && Build.VERSION.SDK_INT == Build.VERSION_CODES.R) {
+                if (DetectingDeviceUtilities.isSamsungDeviceWithAndroidR) {
                     // LIVE
                     // Samsung devices with android 11 
                     // https://dw-ml-nfc.atlassian.net/browse/DAF-4294
@@ -669,8 +670,19 @@ internal class BetterPlayer(
                             val extra = Bundle()
                             extra.putString(MediaMetadataCompat.METADATA_KEY_ARTIST, author)
                             extra.putString(MediaMetadataCompat.METADATA_KEY_TITLE, title)
-                            return MediaDescriptionCompat.Builder().setExtras(extra)
-                                .build()
+                            val mediaDescriptionCompatBuilder = MediaDescriptionCompat.Builder()
+                            mediaDescriptionCompatBuilder.apply {
+                                setExtras(extra)
+                                bitmap?.let {
+                                    setIconBitmap(it)
+                                }
+                            }
+                            return mediaDescriptionCompatBuilder.build()
+                        }
+
+                        override fun getSupportedQueueNavigatorActions(player: Player): Long {
+                            // disable navigator button in notification: Skip, forward, previous, ...
+                            return 0
                         }
                     })
                 }

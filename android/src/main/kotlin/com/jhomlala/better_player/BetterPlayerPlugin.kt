@@ -12,7 +12,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.Rect
+import android.graphics.drawable.Drawable
 import android.graphics.drawable.Icon
 import android.media.MediaMetadata
 import android.os.Build
@@ -31,6 +33,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.android.exoplayer2.Player
 import com.jhomlala.better_player.BetterPlayerCache.releaseCache
+import com.squareup.picasso.Picasso
+import com.squareup.picasso.Target
 import io.flutter.embedding.engine.loader.FlutterLoader
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
@@ -574,28 +578,43 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
 
     private fun setupNotificationParameter(
         dataSource: Map<String, Any?>,
-        betterPlayer: BetterPlayer
+        betterPlayer: BetterPlayer,
+        iconBitmap: Bitmap? = null,
     ) {
         flutterState?.applicationContext?.let { context ->
             val title = getParameter(dataSource, TITLE_PARAMETER, "")
             val author = getParameter(dataSource, AUTHOR_PARAMETER, "")
-            val mediaSession = betterPlayer.setupMediaSession(context, title = title, author = author)
-            mediaSession?.let {
-                if (Build.MANUFACTURER.lowercase() == "samsung" && Build.VERSION.SDK_INT == Build.VERSION_CODES.R) {
+            val imageUrl = getParameter(dataSource, IMAGE_URL_PARAMETER, "")
+            val mediaSession =
+                betterPlayer.setupMediaSession(
+                    context,
+                    title = title,
+                    author = author,
+                    bitmap = iconBitmap
+                )
+            mediaSession?.let { session ->
+                if (DetectingDeviceUtilities.isSamsungDeviceWithAndroidR) {
                     // VOD
                     // Samsung devices with android 11 
                     // https://dw-ml-nfc.atlassian.net/browse/DAF-4294
-                    it.setMetadata(
-                        MediaMetadataCompat.Builder()
-                            .putString(MediaMetadata.METADATA_KEY_ARTIST, author)
-                            .putString(MediaMetadata.METADATA_KEY_TITLE, title)
-                            .build()
-                    )
+                    val metaData = MediaMetadataCompat.Builder()
+                        .putString(MediaMetadata.METADATA_KEY_ARTIST, author)
+                        .putString(MediaMetadata.METADATA_KEY_TITLE, title)
+                        .putLong(MediaMetadata.METADATA_KEY_DURATION, betterPlayer.getDuration())
+
+                    iconBitmap?.let {
+                        metaData.putBitmap(MediaMetadata.METADATA_KEY_ART, it)
+                    } ?: run {
+                        if (imageUrl.isNotBlank()) {
+                            Picasso.get().load(imageUrl).into(imageDownloadHandler)
+                        }
+                    }
+                    session.setMetadata(metaData.build())
                 }
                 _notificationParameter.value = NotificationParameter(
                     title = title,
                     author = author,
-                    imageUrl = getParameter(dataSource, IMAGE_URL_PARAMETER, ""),
+                    imageUrl = imageUrl,
                     notificationChannelName = getParameter(
                         dataSource,
                         NOTIFICATION_CHANNEL_NAME_PARAMETER,
@@ -606,10 +625,31 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                         ACTIVITY_NAME_PARAMETER,
                         "MainActivity"
                     ),
-                    mediaSessionToken = mediaSession.sessionToken
+                    mediaSessionToken = mediaSession.sessionToken,
                 )
             }
         }
+    }
+
+    private var imageDownloadHandler: Target = object : Target {
+        override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
+            bitmap?.let {
+                currentPlayer?.let { player ->
+                    getTextureId(player)?.let { textureId ->
+                        val dataSource = dataSources[textureId]
+                        setupNotificationParameter(dataSource, player, it)
+                        BitmapSingleton.getInstance().setBitmap(it)
+                    }
+                }
+
+            }
+        }
+
+        override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {
+            Log.d("BetterPlayerPlugin", "onBitmapFailed e: " + e?.localizedMessage)
+        }
+
+        override fun onPrepareLoad(placeHolderDrawable: Drawable?) = Unit
     }
 
     private fun removeOtherNotificationListeners() {
