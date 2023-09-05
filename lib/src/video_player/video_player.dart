@@ -532,7 +532,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     return _videoPlayerPlatform.getPosition(_textureId);
   }
 
-  /// The duration of the current video.
+  /// The duration when playing DVR content.
   Future<Duration?> get dvrDuration async {
     if (!value.initialized && _isDisposed || _textureId == null) {
       return null;
