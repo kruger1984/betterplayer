@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/better_player_controller_event.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
@@ -21,6 +22,7 @@ class BetterPlayerController {
   static const String _speedParameter = "speed";
   static const String _dataSourceParameter = "dataSource";
   static const String _authorizationHeader = "Authorization";
+  static const String _wasPlayingParameter = "wasPlaying";
 
   ///General configuration used in controller instance.
   final BetterPlayerConfiguration betterPlayerConfiguration;
@@ -452,6 +454,7 @@ class BetterPlayerController {
               _betterPlayerDataSource!.cacheConfiguration?.maxCacheFileSize ??
                   0,
           cacheKey: _betterPlayerDataSource?.cacheConfiguration?.key,
+          isLiveStream: _betterPlayerDataSource?.isLiveStream,
           showNotification: _betterPlayerDataSource
               ?.notificationConfiguration?.showNotification,
           title: _betterPlayerDataSource?.notificationConfiguration?.title,
@@ -486,6 +489,8 @@ class BetterPlayerController {
             File(betterPlayerDataSource.url),
             showNotification: _betterPlayerDataSource
                 ?.notificationConfiguration?.showNotification,
+            isLiveStream: _betterPlayerDataSource?.isLiveStream,
+            isExtraVideo: _betterPlayerDataSource?.isExtraVideo,
             title: _betterPlayerDataSource?.notificationConfiguration?.title,
             author: _betterPlayerDataSource?.notificationConfiguration?.author,
             imageUrl:
@@ -505,6 +510,8 @@ class BetterPlayerController {
           await videoPlayerController?.setFileDataSource(file,
               showNotification: _betterPlayerDataSource
                   ?.notificationConfiguration?.showNotification,
+              isLiveStream: _betterPlayerDataSource?.isLiveStream,
+              isExtraVideo: _betterPlayerDataSource?.isExtraVideo,
               title: _betterPlayerDataSource?.notificationConfiguration?.title,
               author:
                   _betterPlayerDataSource?.notificationConfiguration?.author,
@@ -829,7 +836,7 @@ class BetterPlayerController {
       BetterPlayerUtils.log("The data source has not been initialized");
       throw StateError("The data source has not been initialized");
     }
-    return _betterPlayerDataSource!.liveStream == true;
+    return _betterPlayerDataSource!.isLiveStream == true;
   }
 
   ///Flag which determines whenever player data source has been initialized.
@@ -1052,6 +1059,47 @@ class BetterPlayerController {
     return _overriddenFit ?? betterPlayerConfiguration.fit;
   }
 
+  /// To handle process when broadcast ended.
+  Future<void>? broadcastEnded() async {
+    if (videoPlayerController == null) {
+      throw StateError("The data source has not been initialized");
+    }
+
+    videoPlayerController?.broadcastEnded();
+  }
+
+  /// To handle process when limited plan video ended.
+  Future<void>? limitedPlanVideoReachEnd() async {
+    if (videoPlayerController == null) {
+      throw StateError("The data source has not been initialized");
+    }
+
+    videoPlayerController?.limitedPlanVideoReachEnd();
+  }
+
+  ///Set up to start Picture in Picture automatically when close app.
+  ///When device is not supported, PiP mode won't be open.
+  Future<void>? setupAutomaticPictureInPictureTransition(
+      {required bool willStartPIP}) async {
+    if (videoPlayerController == null) {
+      throw StateError("The data source has not been initialized");
+    }
+
+    final bool isPipSupported =
+        (await videoPlayerController?.isPictureInPictureSupported()) ?? false;
+
+    if (isPipSupported) {
+      await videoPlayerController?.setupAutomaticPictureInPictureTransition(
+        willStartPIP: willStartPIP,
+      );
+    } else {
+      BetterPlayerUtils.log(
+          "Picture in picture is not supported in this device. If you're "
+          "using Android, please check if you're using activity v2 "
+          "embedding.");
+    }
+  }
+
   ///Enable Picture in Picture (PiP) mode. [betterPlayerGlobalKey] is required
   ///to open PiP mode in iOS. When device is not supported, PiP mode won't be
   ///open.
@@ -1164,6 +1212,38 @@ class BetterPlayerController {
       case VideoEventType.bufferingEnd:
         _postEvent(BetterPlayerEvent(BetterPlayerEventType.bufferingEnd));
         break;
+
+      case VideoEventType.enteringPIP:
+        _postEvent(BetterPlayerEvent(BetterPlayerEventType.enteringPIP));
+        break;
+
+      case VideoEventType.exitingPIP:
+        _postEvent(BetterPlayerEvent(
+          BetterPlayerEventType.exitingPIP,
+          parameters: <String, dynamic>{
+            _wasPlayingParameter: event.wasPlaying,
+          },
+        ));
+        break;
+
+      case VideoEventType.tapExternalPlayButton:
+        _postEvent(
+            BetterPlayerEvent(BetterPlayerEventType.tapExternalPlayButton));
+        break;
+
+      case VideoEventType.tapExternalPauseButton:
+        _postEvent(
+            BetterPlayerEvent(BetterPlayerEventType.tapExternalPauseButton));
+        break;
+      case VideoEventType.finishedPlayInLooping:
+        _postEvent(
+            BetterPlayerEvent(BetterPlayerEventType.finishedPlayInLooping));
+        break;
+      case VideoEventType.pressedBackToAppButton:
+        _postEvent(
+            BetterPlayerEvent(BetterPlayerEventType.pressedBackToAppButton));
+        break;
+
       default:
 
         ///TODO: Handle when needed

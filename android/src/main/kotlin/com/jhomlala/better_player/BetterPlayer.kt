@@ -10,57 +10,50 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
+import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import com.jhomlala.better_player.DataSourceUtils.getUserAgent
-import com.jhomlala.better_player.DataSourceUtils.isHTTP
-import com.jhomlala.better_player.DataSourceUtils.getDataSourceFactory
-import io.flutter.plugin.common.EventChannel
-import io.flutter.view.TextureRegistry.SurfaceTextureEntry
-import io.flutter.plugin.common.MethodChannel
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
-import com.google.android.exoplayer2.ui.PlayerNotificationManager
-import android.support.v4.media.session.MediaSessionCompat
-import com.google.android.exoplayer2.drm.DrmSessionManager
-import androidx.work.WorkManager
-import androidx.work.WorkInfo
-import com.google.android.exoplayer2.drm.HttpMediaDrmCallback
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
-import com.google.android.exoplayer2.drm.DefaultDrmSessionManager
-import com.google.android.exoplayer2.drm.FrameworkMediaDrm
-import com.google.android.exoplayer2.drm.UnsupportedDrmException
-import com.google.android.exoplayer2.drm.DummyExoMediaDrm
-import com.google.android.exoplayer2.drm.LocalMediaDrmCallback
-import com.google.android.exoplayer2.source.MediaSource
-import com.google.android.exoplayer2.source.ClippingMediaSource
-import com.google.android.exoplayer2.ui.PlayerNotificationManager.MediaDescriptionAdapter
-import com.google.android.exoplayer2.ui.PlayerNotificationManager.BitmapCallback
-import androidx.work.OneTimeWorkRequest
-import android.support.v4.media.session.PlaybackStateCompat
+import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.MediaMetadataCompat
+import android.support.v4.media.session.MediaSessionCompat
+import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import android.view.Surface
 import androidx.lifecycle.Observer
-import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource
-import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
+import com.google.android.exoplayer2.*
+import com.google.android.exoplayer2.audio.AudioAttributes
+import com.google.android.exoplayer2.drm.*
+import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
+import com.google.android.exoplayer2.ext.mediasession.TimelineQueueNavigator
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
+import com.google.android.exoplayer2.source.ClippingMediaSource
+import com.google.android.exoplayer2.source.MediaSource
+import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.source.dash.DashMediaSource
 import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
-import com.google.android.exoplayer2.source.ProgressiveMediaSource
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
-import io.flutter.plugin.common.EventChannel.EventSink
-import androidx.work.Data
-import com.google.android.exoplayer2.*
-import com.google.android.exoplayer2.audio.AudioAttributes
-import com.google.android.exoplayer2.drm.DrmSessionManagerProvider
-import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
+import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource
+import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.TrackSelectionOverride
+import com.google.android.exoplayer2.ui.PlayerNotificationManager
+import com.google.android.exoplayer2.ui.PlayerNotificationManager.*
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultDataSource
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.google.android.exoplayer2.util.Util
+import com.jhomlala.better_player.DataSourceUtils.getDataSourceFactory
+import com.jhomlala.better_player.DataSourceUtils.getUserAgent
+import com.jhomlala.better_player.DataSourceUtils.isHTTP
+import io.flutter.plugin.common.EventChannel
+import io.flutter.plugin.common.EventChannel.EventSink
+import io.flutter.plugin.common.MethodChannel
+import io.flutter.view.TextureRegistry.SurfaceTextureEntry
 import java.io.File
-import java.lang.Exception
-import java.lang.IllegalStateException
 import java.util.*
 import kotlin.math.max
 import kotlin.math.min
@@ -70,7 +63,8 @@ internal class BetterPlayer(
     private val eventChannel: EventChannel,
     private val textureEntry: SurfaceTextureEntry,
     customDefaultLoadControl: CustomDefaultLoadControl?,
-    result: MethodChannel.Result
+    result: MethodChannel.Result,
+    private val customPlayerEventListener: Player.Listener
 ) {
     private val exoPlayer: ExoPlayer?
     private val eventSink = QueuingEventSink()
@@ -91,6 +85,7 @@ internal class BetterPlayer(
     private val customDefaultLoadControl: CustomDefaultLoadControl =
         customDefaultLoadControl ?: CustomDefaultLoadControl()
     private var lastSendBufferedPosition = 0L
+    private var mediaSessionConnector: MediaSessionConnector? = null
 
     init {
         val loadBuilder = DefaultLoadControl.Builder()
@@ -308,7 +303,6 @@ internal class BetterPlayer(
         ).setMediaDescriptionAdapter(mediaDescriptionAdapter).build()
 
         playerNotificationManager?.apply {
-
             exoPlayer?.let {
                 setPlayer(ForwardingPlayer(exoPlayer))
                 setUseNextAction(false)
@@ -321,7 +315,11 @@ internal class BetterPlayer(
             }
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        // It looks this process only needed before Android 12 (S)
+        // If do in Android 13, the buttons in notification become strange.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+            && Build.VERSION.SDK_INT <= Build.VERSION_CODES.S
+        ) {
             refreshHandler = Handler(Looper.getMainLooper())
             refreshRunnable = Runnable {
                 val playbackState: PlaybackStateCompat = if (exoPlayer?.isPlaying == true) {
@@ -493,6 +491,9 @@ internal class BetterPlayer(
                 eventSink.error("VideoError", "Video player had error $error", "")
             }
         })
+        // Add event listener given from BetterPlayerPlugin too.
+        exoPlayer?.addListener(customPlayerEventListener)
+
         val reply: MutableMap<String, Any> = HashMap()
         reply["textureId"] = textureEntry.id()
         result.success(reply)
@@ -533,6 +534,18 @@ internal class BetterPlayer(
 
     fun pause() {
         exoPlayer?.playWhenReady = false
+    }
+
+    fun tapExternalPlayButton() {
+        val event: MutableMap<String, Any?> = HashMap()
+        event["event"] = "tapExternalPlayButton"
+        eventSink.success(event)
+    }
+
+    fun tapExternalPauseButton() {
+        val event: MutableMap<String, Any?> = HashMap()
+        event["event"] = "tapExternalPauseButton"
+        eventSink.success(event)
     }
 
     fun setLooping(value: Boolean) {
@@ -610,7 +623,7 @@ internal class BetterPlayer(
         }
     }
 
-    private fun getDuration(): Long = exoPlayer?.duration ?: 0L
+    fun getDuration(): Long = exoPlayer?.duration ?: 0L
 
     /**
      * Create media session which will be used in notifications, pip mode.
@@ -619,7 +632,12 @@ internal class BetterPlayer(
      * @return - configured MediaSession instance
      */
     @SuppressLint("InlinedApi")
-    fun setupMediaSession(context: Context?): MediaSessionCompat? {
+    fun setupMediaSession(
+        context: Context?,
+        title: String = "",
+        author: String = "",
+        bitmap: Bitmap? = null,
+    ): MediaSessionCompat? {
         mediaSession?.release()
         context?.let {
 
@@ -637,13 +655,84 @@ internal class BetterPlayer(
                 }
             })
             mediaSession.isActive = true
-            val mediaSessionConnector = MediaSessionConnector(mediaSession)
-            mediaSessionConnector.setPlayer(exoPlayer)
+            mediaSessionConnector = MediaSessionConnector(mediaSession)
+            mediaSessionConnector?.apply {
+                setPlayer(exoPlayer)
+                if (DetectingDeviceUtilities.isSamsungDeviceWithAndroidR) {
+                    // LIVE
+                    // Samsung devices with android 11 
+                    // https://dw-ml-nfc.atlassian.net/browse/DAF-4294
+                    setQueueNavigator(object : TimelineQueueNavigator(mediaSession) {
+                        override fun getMediaDescription(
+                            player: Player,
+                            windowIndex: Int
+                        ): MediaDescriptionCompat {
+                            val extra = Bundle()
+                            extra.putString(MediaMetadataCompat.METADATA_KEY_ARTIST, author)
+                            extra.putString(MediaMetadataCompat.METADATA_KEY_TITLE, title)
+                            val mediaDescriptionCompatBuilder = MediaDescriptionCompat.Builder()
+                            mediaDescriptionCompatBuilder.apply {
+                                setExtras(extra)
+                                bitmap?.let {
+                                    setIconBitmap(it)
+                                }
+                            }
+                            return mediaDescriptionCompatBuilder.build()
+                        }
+
+                        override fun getSupportedQueueNavigatorActions(player: Player): Long {
+                            // disable navigator button in notification: Skip, forward, previous, ...
+                            return 0
+                        }
+                    })
+                }
+            }
             this.mediaSession = mediaSession
             return mediaSession
         }
         return null
+    }
 
+
+    fun deactivateMediaSession() {
+        mediaSession?.isActive = false
+        mediaSessionConnector?.setPlayer(null)
+    }
+
+    fun reactivateMediaSessionIfNeeded() {
+        if (mediaSession?.isActive == false) {
+            mediaSession?.isActive = true
+            mediaSessionConnector?.setPlayer(exoPlayer)
+        }
+    }
+
+    // Only needed for Android 13 or later
+    fun setAsPlaybackStoppedToMediaSession() {
+        val playbackState = PlaybackStateCompat.Builder()
+            .setActions(PlaybackStateCompat.ACTION_SEEK_TO)
+            .setState(PlaybackStateCompat.STATE_STOPPED, position, 1.0f)
+            .build()
+        mediaSession?.setPlaybackState(playbackState)
+    }
+
+    // Only work if it is more than Android 13
+    fun setMediaSessionCallback() {
+        mediaSession?.setCallback(object : MediaSessionCompat.Callback() {
+            override fun onSeekTo(pos: Long) {
+                sendSeekToEvent(pos)
+                super.onSeekTo(pos)
+            }
+
+            override fun onPlay() {
+                tapExternalPlayButton()
+                super.onPlay()
+            }
+
+            override fun onPause() {
+                tapExternalPauseButton()
+                super.onPause()
+            }
+        })
     }
 
     fun onPictureInPictureStatusChanged(inPip: Boolean) {
@@ -715,8 +804,11 @@ internal class BetterPlayer(
         if (mappedTrackInfo != null) {
             val builder = trackSelector.parameters.buildUpon()
                 .setRendererDisabled(rendererIndex, false)
-                .addOverride(TrackSelectionOverride(mappedTrackInfo.getTrackGroups(rendererIndex)
-                    .get(groupIndex), rendererIndex)
+                .addOverride(
+                    TrackSelectionOverride(
+                        mappedTrackInfo.getTrackGroups(rendererIndex)
+                            .get(groupIndex), rendererIndex
+                    )
                 )
                 .build()
 

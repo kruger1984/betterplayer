@@ -2,11 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 import 'dart:async';
+
 import 'package:better_player/src/configuration/better_player_buffering_configuration.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+
 import 'video_player_platform_interface.dart';
 
 const MethodChannel _channel = MethodChannel('better_player_channel');
@@ -65,6 +67,8 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'maxCacheSize': 0,
           'maxCacheFileSize': 0,
           'showNotification': dataSource.showNotification,
+          'isLiveStream': dataSource.isLiveStream,
+          'isExtraVideo': dataSource.isExtraVideo,
           'title': dataSource.title,
           'author': dataSource.author,
           'imageUrl': dataSource.imageUrl,
@@ -84,6 +88,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'maxCacheFileSize': dataSource.maxCacheFileSize,
           'cacheKey': dataSource.cacheKey,
           'showNotification': dataSource.showNotification,
+          'isLiveStream': dataSource.isLiveStream,
           'title': dataSource.title,
           'author': dataSource.author,
           'imageUrl': dataSource.imageUrl,
@@ -105,6 +110,8 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'maxCacheSize': 0,
           'maxCacheFileSize': 0,
           'showNotification': dataSource.showNotification,
+          'isLiveStream': dataSource.isLiveStream,
+          'isExtraVideo': dataSource.isExtraVideo,
           'title': dataSource.title,
           'author': dataSource.author,
           'imageUrl': dataSource.imageUrl,
@@ -220,6 +227,36 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
     if (milliseconds <= 0) return null;
 
     return DateTime.fromMillisecondsSinceEpoch(milliseconds);
+  }
+
+  @override
+  Future<void> broadcastEnded({int? textureId}) async {
+    return _channel.invokeMethod<void>(
+      'broadcastEnded',
+      <String, dynamic>{'textureId': textureId},
+    );
+  }
+
+  @override
+  Future<void> limitedPlanVideoReachEnd({int? textureId}) async {
+    return _channel.invokeMethod<void>(
+      'limitedPlanVideoReachEnd',
+      <String, dynamic>{'textureId': textureId},
+    );
+  }
+
+  @override
+  Future<void> setupAutomaticPictureInPictureTransition({
+    int? textureId,
+    bool? willStartPIP,
+  }) async {
+    return _channel.invokeMethod<void>(
+      'setupAutomaticPictureInPictureTransition',
+      <String, dynamic>{
+        'textureId': textureId,
+        'willStartPIP': willStartPIP,
+      },
+    );
   }
 
   @override
@@ -406,6 +443,43 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
         case 'pipStop':
           return VideoEvent(
             eventType: VideoEventType.pipStop,
+            key: key,
+          );
+
+        case 'enteringPIP':
+          return VideoEvent(
+            eventType: VideoEventType.enteringPIP,
+            key: key,
+          );
+
+        case 'exitingPIP':
+          return VideoEvent(
+            eventType: VideoEventType.exitingPIP,
+            key: key,
+            wasPlaying: map['wasPlaying'] as bool?,
+          );
+
+        case 'tapExternalPlayButton':
+          return VideoEvent(
+            eventType: VideoEventType.tapExternalPlayButton,
+            key: key,
+          );
+
+        case 'tapExternalPauseButton':
+          return VideoEvent(
+            eventType: VideoEventType.tapExternalPauseButton,
+            key: key,
+          );
+
+        case 'finishedPlayInLooping':
+          return VideoEvent(
+            eventType: VideoEventType.finishedPlayInLooping,
+            key: key,
+          );
+
+        case 'pressedBackToAppButton':
+          return VideoEvent(
+            eventType: VideoEventType.pressedBackToAppButton,
             key: key,
           );
 

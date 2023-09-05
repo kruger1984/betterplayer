@@ -21,7 +21,7 @@ class BetterPlayerDataSource {
   final List<BetterPlayerSubtitlesSource>? subtitles;
 
   ///Flag to determine if current data source is live stream
-  final bool? liveStream;
+  final bool? isLiveStream;
 
   /// Custom headers for player
   final Map<String, String>? headers;
@@ -76,12 +76,16 @@ class BetterPlayerDataSource {
   ///platform.
   final BetterPlayerBufferingConfiguration bufferingConfiguration;
 
+  ///Currently using for PiP plan limited video. Used only in iOS.
+  final bool? isExtraVideo;
+
   BetterPlayerDataSource(
     this.type,
     this.url, {
     this.bytes,
     this.subtitles,
-    this.liveStream = false,
+    this.isLiveStream = false,
+    this.isExtraVideo = false,
     this.headers,
     this.useAsmsSubtitles = true,
     this.useAsmsTracks = true,
@@ -111,7 +115,7 @@ class BetterPlayerDataSource {
   factory BetterPlayerDataSource.network(
     String url, {
     List<BetterPlayerSubtitlesSource>? subtitles,
-    bool? liveStream,
+    bool? isLiveStream,
     Map<String, String>? headers,
     bool? useAsmsSubtitles,
     bool? useAsmsTracks,
@@ -131,7 +135,7 @@ class BetterPlayerDataSource {
       BetterPlayerDataSourceType.network,
       url,
       subtitles: subtitles,
-      liveStream: liveStream,
+      isLiveStream: isLiveStream,
       headers: headers,
       useAsmsSubtitles: useAsmsSubtitles,
       useAsmsTracks: useAsmsTracks,
@@ -154,6 +158,8 @@ class BetterPlayerDataSource {
     List<BetterPlayerSubtitlesSource>? subtitles,
     bool? useAsmsSubtitles,
     bool? useAsmsTracks,
+    bool? isLiveStream,
+    bool? isExtraVideo,
     Map<String, String>? qualities,
     BetterPlayerCacheConfiguration? cacheConfiguration,
     BetterPlayerNotificationConfiguration? notificationConfiguration,
@@ -166,6 +172,8 @@ class BetterPlayerDataSource {
       subtitles: subtitles,
       useAsmsSubtitles: useAsmsSubtitles,
       useAsmsTracks: useAsmsTracks,
+      isLiveStream: isLiveStream,
+      isExtraVideo: isExtraVideo,
       resolutions: qualities,
       cacheConfiguration: cacheConfiguration,
       notificationConfiguration: notificationConfiguration =
@@ -183,6 +191,8 @@ class BetterPlayerDataSource {
     List<BetterPlayerSubtitlesSource>? subtitles,
     bool? useAsmsSubtitles,
     bool? useAsmsTracks,
+    bool? isLiveStream,
+    bool? isExtraVideo,
     Map<String, String>? qualities,
     BetterPlayerCacheConfiguration? cacheConfiguration,
     BetterPlayerNotificationConfiguration? notificationConfiguration,
@@ -197,6 +207,8 @@ class BetterPlayerDataSource {
       subtitles: subtitles,
       useAsmsSubtitles: useAsmsSubtitles,
       useAsmsTracks: useAsmsTracks,
+      isLiveStream: isLiveStream,
+      isExtraVideo: isExtraVideo,
       resolutions: qualities,
       cacheConfiguration: cacheConfiguration,
       notificationConfiguration: notificationConfiguration =
@@ -211,7 +223,8 @@ class BetterPlayerDataSource {
     String? url,
     List<int>? bytes,
     List<BetterPlayerSubtitlesSource>? subtitles,
-    bool? liveStream,
+    bool? isLiveStream,
+    bool? isExtraVideo,
     Map<String, String>? headers,
     bool? useAsmsSubtitles,
     bool? useAsmsTracks,
@@ -233,7 +246,8 @@ class BetterPlayerDataSource {
       url ?? this.url,
       bytes: bytes ?? this.bytes,
       subtitles: subtitles ?? this.subtitles,
-      liveStream: liveStream ?? this.liveStream,
+      isLiveStream: isLiveStream ?? this.isLiveStream,
+      isExtraVideo: isExtraVideo ?? this.isExtraVideo,
       headers: headers ?? this.headers,
       useAsmsSubtitles: useAsmsSubtitles ?? this.useAsmsSubtitles,
       useAsmsTracks: useAsmsTracks ?? this.useAsmsTracks,

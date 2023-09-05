@@ -9,6 +9,7 @@ import 'dart:async';
 import 'package:better_player/src/configuration/better_player_buffering_configuration.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+
 import 'method_channel_video_player.dart';
 
 /// The interface that implementations of video_player must implement.
@@ -137,6 +138,26 @@ abstract class VideoPlayerPlatform {
     throw UnimplementedError('getAbsolutePosition() has not been implemented.');
   }
 
+  /// To process when broadcast ended.
+  Future<void> broadcastEnded({int? textureId}) {
+    throw UnimplementedError('broadcastEnded() has not been implemented.');
+  }
+
+  /// To process when limited plan video ended.
+  Future<void> limitedPlanVideoReachEnd({int? textureId}) {
+    throw UnimplementedError(
+        'limitedPlanVideoReachEnd() has not been implemented.');
+  }
+
+  ///Set up auto PiP transition.
+  Future<void> setupAutomaticPictureInPictureTransition({
+    int? textureId,
+    bool? willStartPIP,
+  }) {
+    throw UnimplementedError(
+        'setupAutomaticPictureInPictureTransition() has not been implemented.');
+  }
+
   ///Enables PiP mode.
   Future<void> enablePictureInPicture(int? textureId, double? top, double? left,
       double? width, double? height) {
@@ -216,6 +237,8 @@ class DataSource {
     this.maxCacheFileSize = _maxCacheFileSize,
     this.cacheKey,
     this.showNotification = false,
+    this.isExtraVideo = false,
+    this.isLiveStream = false,
     this.title,
     this.author,
     this.imageUrl,
@@ -282,6 +305,10 @@ class DataSource {
   final String? cacheKey;
 
   final bool? showNotification;
+
+  final bool? isExtraVideo;
+
+  final bool? isLiveStream;
 
   final String? title;
 
@@ -379,6 +406,7 @@ class VideoEvent {
     this.size,
     this.buffered,
     this.position,
+    this.wasPlaying,
   });
 
   /// The type of the event.
@@ -407,6 +435,9 @@ class VideoEvent {
   ///Seek position
   final Duration? position;
 
+  /// Only used if [eventType] is [VideoEventType.exitingPIP].
+  final bool? wasPlaying;
+
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
@@ -416,6 +447,7 @@ class VideoEvent {
             eventType == other.eventType &&
             duration == other.duration &&
             size == other.size &&
+            wasPlaying == other.wasPlaying &&
             listEquals(buffered, other.buffered);
   }
 
@@ -424,7 +456,8 @@ class VideoEvent {
       eventType.hashCode ^
       duration.hashCode ^
       size.hashCode ^
-      buffered.hashCode;
+      buffered.hashCode ^
+      wasPlaying.hashCode;
 }
 
 /// Type of the event.
@@ -462,8 +495,26 @@ enum VideoEventType {
   /// Picture in picture mode has been dismissed
   pipStop,
 
+  /// will start Picture in picture
+  enteringPIP,
+
+  /// will stop Picture in picture
+  exitingPIP,
+
+  /// When tap custom play button from outside the app (e.g. PIP, Notification)
+  tapExternalPlayButton,
+
+  /// When tap custom pause button from outside the app (e.g. PIP, Notification)
+  tapExternalPauseButton,
+
+  /// When video reaches end of duration in looping mode (IOS only)
+  finishedPlayInLooping,
+
   /// An unknown event has been received.
   unknown,
+
+  /// back to app button ( right button in pip mode) was pressed (iOS only)
+  pressedBackToAppButton,
 }
 
 /// Describes a discrete segment of time within a video using a [start] and

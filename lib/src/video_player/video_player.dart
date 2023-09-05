@@ -5,6 +5,7 @@
 // Dart imports:
 import 'dart:async';
 import 'dart:io';
+
 import 'package:better_player/src/configuration/better_player_buffering_configuration.dart';
 import 'package:better_player/src/video_player/video_player_platform_interface.dart';
 import 'package:flutter/material.dart';
@@ -252,6 +253,10 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         case VideoEventType.pipStop:
           value = value.copyWith(isPip: false);
           break;
+        case VideoEventType.enteringPIP:
+          break;
+        case VideoEventType.exitingPIP:
+          break;
         case VideoEventType.unknown:
           break;
       }
@@ -284,6 +289,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     String dataSource, {
     String? package,
     bool? showNotification,
+    bool? isLiveStream,
+    bool? isExtraVideo,
     String? title,
     String? author,
     String? imageUrl,
@@ -297,6 +304,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         asset: dataSource,
         package: package,
         showNotification: showNotification,
+        isLiveStream: isLiveStream,
+        isExtraVideo: isExtraVideo,
         title: title,
         author: author,
         imageUrl: imageUrl,
@@ -324,6 +333,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     int? maxCacheFileSize,
     String? cacheKey,
     bool? showNotification,
+    bool? isLiveStream,
     String? title,
     String? author,
     String? imageUrl,
@@ -340,6 +350,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       DataSource(
         sourceType: DataSourceType.network,
         uri: dataSource,
+        isLiveStream: isLiveStream,
         formatHint: formatHint,
         headers: headers,
         useCache: useCache,
@@ -368,6 +379,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// `'file://${file.path}'`.
   Future<void> setFileDataSource(File file,
       {bool? showNotification,
+      bool? isLiveStream,
+      bool? isExtraVideo,
       String? title,
       String? author,
       String? imageUrl,
@@ -380,6 +393,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           sourceType: DataSourceType.file,
           uri: 'file://${file.path}',
           showNotification: showNotification,
+          isLiveStream: isLiveStream,
+          isExtraVideo: isExtraVideo,
           title: title,
           author: author,
           imageUrl: imageUrl,
@@ -394,6 +409,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     if (_isDisposed) {
       return;
     }
+
+    _seekPosition = null;
 
     value = VideoPlayerValue(
       duration: null,
@@ -591,6 +608,26 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   Future<void> setTrackParameters(int? width, int? height, int? bitrate) async {
     await _videoPlayerPlatform.setTrackParameters(
         _textureId, width, height, bitrate);
+  }
+
+  Future<void> broadcastEnded() async {
+    await _videoPlayerPlatform.broadcastEnded(
+      textureId: textureId,
+    );
+  }
+
+  Future<void> limitedPlanVideoReachEnd() async {
+    await _videoPlayerPlatform.limitedPlanVideoReachEnd(
+      textureId: textureId,
+    );
+  }
+
+  Future<void> setupAutomaticPictureInPictureTransition(
+      {bool? willStartPIP}) async {
+    await _videoPlayerPlatform.setupAutomaticPictureInPictureTransition(
+      textureId: textureId,
+      willStartPIP: willStartPIP,
+    );
   }
 
   Future<void> enablePictureInPicture(
