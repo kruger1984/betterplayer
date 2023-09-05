@@ -550,6 +550,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 - (int64_t)duration {
     CMTime time;
     if (@available(iOS 13, *)) {
+        // NOTE: This value is always 0 when playing live streming include DVR mode.
         time =  [[_player currentItem] duration];
     } else {
         time =  [[[_player currentItem] asset] duration];
@@ -559,6 +560,12 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     }
 
     return [BetterPlayerTimeUtils FLTCMTimeToMillis:(time)];
+}
+
+// DVR video duration. (This is not work for Live point mode.)
+- (int64_t)dvrDuration {
+    CMTimeRange seekableRange = [_player.currentItem.seekableTimeRanges.lastObject CMTimeRangeValue];
+    return [BetterPlayerTimeUtils FLTCMTimeToMillis:(seekableRange.duration)];
 }
 
 - (void)seekTo:(int)location {

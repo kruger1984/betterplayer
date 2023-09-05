@@ -217,6 +217,16 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
+  Future<Duration> getDvrDuration(int? textureId) async {
+    return Duration(
+        milliseconds: await _channel.invokeMethod<int>(
+              'getDvrDuration',
+              <String, dynamic>{'textureId': textureId},
+            ) ??
+            0);
+  }
+
+  @override
   Future<DateTime?> getAbsolutePosition(int? textureId) async {
     final int milliseconds = await _channel.invokeMethod<int>(
           'absolutePosition',

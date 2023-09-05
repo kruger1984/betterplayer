@@ -1306,6 +1306,10 @@ class BetterPlayerController {
     }
   }
 
+  Future<Duration?>? getDvrDuration() async {
+    return videoPlayerController?.dvrDuration;
+  }
+
   ///Clear all cached data. Video player controller must be initialized to
   ///clear the cache.
   Future<void> clearCache() async {

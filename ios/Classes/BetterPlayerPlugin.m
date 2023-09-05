@@ -512,6 +512,8 @@ bool _isCommandCenterButtonsEnabled = true;
             result(@([player position]));
         } else if ([@"absolutePosition" isEqualToString:call.method]) {
             result(@([player absolutePosition]));
+        } else if ([@"getDvrDuration" isEqualToString:call.method]) {
+            result(@([player dvrDuration]));
         } else if ([@"seekTo" isEqualToString:call.method]) {
             [player seekTo:[argsMap[@"location"] intValue]];
 

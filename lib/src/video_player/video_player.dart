@@ -532,6 +532,14 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     return _videoPlayerPlatform.getPosition(_textureId);
   }
 
+  /// The duration when playing DVR content.
+  Future<Duration?> get dvrDuration async {
+    if (!value.initialized && _isDisposed || _textureId == null) {
+      return null;
+    }
+    return _videoPlayerPlatform.getDvrDuration(_textureId);
+  }
+
   /// The absolute position in the current video stream
   /// (i.e. EXT-X-PROGRAM-DATE-TIME in HLS).
   Future<DateTime?> get absolutePosition async {
