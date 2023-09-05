@@ -623,7 +623,7 @@ internal class BetterPlayer(
         }
     }
 
-    private fun getDuration(): Long = exoPlayer?.duration ?: 0L
+    fun getDuration(): Long = exoPlayer?.duration ?: 0L
 
     /**
      * Create media session which will be used in notifications, pip mode.
@@ -839,8 +839,6 @@ internal class BetterPlayer(
         surface?.release()
         exoPlayer?.release()
     }
-    
-    val duration : Long? get() = exoPlayer?.duration
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
