@@ -603,7 +603,13 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                     val metaData = MediaMetadataCompat.Builder()
                         .putString(MediaMetadata.METADATA_KEY_ARTIST, author)
                         .putString(MediaMetadata.METADATA_KEY_TITLE, title)
-                        .putLong(MediaMetadata.METADATA_KEY_DURATION, betterPlayer.getDuration())
+
+                    betterPlayer.isLive?.let {
+                        if (!it) {
+                            // only set duration VOD
+                            metaData.putLong(MediaMetadata.METADATA_KEY_DURATION, betterPlayer.getDuration())
+                        }
+                    }
 
                     iconBitmap?.let {
                         metaData.putBitmap(MediaMetadata.METADATA_KEY_ART, it)
