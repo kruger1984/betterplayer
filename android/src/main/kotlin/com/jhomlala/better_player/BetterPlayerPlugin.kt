@@ -604,7 +604,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                         .putString(MediaMetadata.METADATA_KEY_ARTIST, author)
                         .putString(MediaMetadata.METADATA_KEY_TITLE, title)
 
-                    betterPlayer.isLive?.let {
+                    betterPlayer.isCurrentMediaItemLive?.let {
                         if (!it) {
                             // only set duration VOD
                             metaData.putLong(MediaMetadata.METADATA_KEY_DURATION, betterPlayer.getDuration())

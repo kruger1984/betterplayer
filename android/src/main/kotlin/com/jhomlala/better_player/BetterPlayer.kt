@@ -662,32 +662,30 @@ internal class BetterPlayer(
                     // LIVE
                     // Samsung devices with android 11 
                     // https://dw-ml-nfc.atlassian.net/browse/DAF-4294
-                    exoPlayer?.isCurrentMediaItemLive?.let {
-                        if (it) {
-                            setQueueNavigator(object : TimelineQueueNavigator(mediaSession) {
-                                override fun getMediaDescription(
-                                    player: Player,
-                                    windowIndex: Int
-                                ): MediaDescriptionCompat {
-                                    val extra = Bundle()
-                                    extra.putString(MediaMetadataCompat.METADATA_KEY_ARTIST, author)
-                                    extra.putString(MediaMetadataCompat.METADATA_KEY_TITLE, title)
-                                    val mediaDescriptionCompatBuilder = MediaDescriptionCompat.Builder()
-                                    mediaDescriptionCompatBuilder.apply {
-                                        setExtras(extra)
-                                        bitmap?.let { bm ->
-                                            setIconBitmap(bm)
-                                        }
+                    val isCurrentMediaItemLive = exoPlayer?.isCurrentMediaItemLive
+                    if (isCurrentMediaItemLive != null && isCurrentMediaItemLive) {
+                        setQueueNavigator(object : TimelineQueueNavigator(mediaSession) {
+                            override fun getMediaDescription(
+                                player: Player, windowIndex: Int
+                            ): MediaDescriptionCompat {
+                                val extra = Bundle()
+                                extra.putString(MediaMetadataCompat.METADATA_KEY_ARTIST, author)
+                                extra.putString(MediaMetadataCompat.METADATA_KEY_TITLE, title)
+                                val mediaDescriptionCompatBuilder = MediaDescriptionCompat.Builder()
+                                mediaDescriptionCompatBuilder.apply {
+                                    setExtras(extra)
+                                    bitmap?.let { bm ->
+                                        setIconBitmap(bm)
                                     }
-                                    return mediaDescriptionCompatBuilder.build()
                                 }
+                                return mediaDescriptionCompatBuilder.build()
+                            }
 
-                                override fun getSupportedQueueNavigatorActions(player: Player): Long {
-                                    // disable navigator button in notification: Skip, forward, previous, ...
-                                    return 0
-                                }
-                            })
-                        }
+                            override fun getSupportedQueueNavigatorActions(player: Player): Long {
+                                // disable navigator button in notification: Skip, forward, previous, ...
+                                return 0
+                            }
+                        })
                     }
                 }
             }
@@ -844,7 +842,7 @@ internal class BetterPlayer(
         exoPlayer?.release()
     }
 
-    val isLive get() = exoPlayer?.isCurrentMediaItemLive
+    val isCurrentMediaItemLive get() = exoPlayer?.isCurrentMediaItemLive
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
