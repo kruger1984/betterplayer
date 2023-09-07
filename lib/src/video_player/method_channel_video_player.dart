@@ -515,6 +515,17 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
     }
   }
 
+  @override
+  Future<void> setIsPremiumBannerDisplay(int? textureId, bool isDisplay) {
+    return _channel.invokeMethod<void>(
+      'setIsPremiumBannerDisplay',
+      <String, dynamic>{
+        'textureId': textureId,
+        'isDisplay': isDisplay,
+      },
+    );
+  }
+
   EventChannel _eventChannelFor(int? textureId) {
     return EventChannel('better_player_channel/videoEvents$textureId');
   }

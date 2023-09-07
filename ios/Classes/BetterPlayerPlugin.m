@@ -613,6 +613,8 @@ bool _isCommandCenterButtonsEnabled = true;
                 }
             }
             result(nil);
+        } else if ([@"setIsPremiumBannerDisplay" isEqualToString:call.method]){
+            [player setIsPremiumBannerDisplay:[argsMap[@"isDisplay"] boolValue]];
         } else {
             result(FlutterMethodNotImplemented);
         }

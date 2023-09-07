@@ -1292,6 +1292,10 @@ class BetterPlayerController {
     videoPlayerController!.setMixWithOthers(mixWithOthers);
   }
 
+  void setIsPremiumBannerDisplay(bool isDisplay) {
+    videoPlayerController!.setIsPremiumBannerDisplay(isDisplay);
+  }
+
   void setDuration(Duration duration) {
     if (videoPlayerController != null) {
       videoPlayerController!.setDuration(duration);

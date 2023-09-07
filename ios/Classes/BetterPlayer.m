@@ -480,6 +480,10 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         if (_player.status != AVPlayerStatusReadyToPlay) {
             return;
         }
+        
+        if (_blackCoverView) {
+            [_blackCoverView removeFromSuperview];
+        }
 
         CGSize size = [_player currentItem].presentationSize;
         CGFloat width = size.width;
@@ -771,6 +775,33 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)pictureInPictureControllerWillStartPictureInPicture:(AVPictureInPictureController *)pictureInPictureController {
+    if (_isPremiumBannerDisplay) {
+        UIWindow *window = [UIApplication sharedApplication].windows.firstObject;
+        if (window) {
+            UIView *customView = [[UIView alloc] init];
+            customView.translatesAutoresizingMaskIntoConstraints = false;
+            customView.backgroundColor = [UIColor blackColor];
+            _blackCoverView = customView;
+            [window addSubview:customView];
+            // Set up constraints to make the child view fill its parent
+            NSLayoutConstraint *topConstraint = [customView.topAnchor constraintEqualToAnchor:window.topAnchor];
+            NSLayoutConstraint *bottomConstraint = [customView.bottomAnchor constraintEqualToAnchor:window.bottomAnchor];
+            NSLayoutConstraint *leadingConstraint = [customView.leadingAnchor constraintEqualToAnchor:window.leadingAnchor];
+            NSLayoutConstraint *trailingConstraint = [customView.trailingAnchor constraintEqualToAnchor:window.trailingAnchor];
+
+            // Activate the constraints
+            [topConstraint setActive:YES];
+            [bottomConstraint setActive:YES];
+            [leadingConstraint setActive:YES];
+            [trailingConstraint setActive:YES];
+        }
+    } else {
+        // remove just in case
+        if (_blackCoverView) {
+            [_blackCoverView removeFromSuperview];
+        }
+    }
+    
     // When change to PIP mode, need to correct control status
     _lastAvPlayerTimeControlStatus = _player.timeControlStatus;
     if (_eventSink != nil) {
@@ -799,6 +830,10 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
 - (void)setIsDisplayPipButtons:(BOOL) isDisplay {
     [_pipController setValue:[NSNumber numberWithInt:isDisplay ? 0 : 1] forKey:@"controlsStyle"];
+}
+
+- (void)setIsPremiumBannerDisplay:(BOOL) isDisplay {
+    _isPremiumBannerDisplay = isDisplay;
 }
 
 - (void) setAudioTrack:(NSString*) name index:(int) index{

@@ -38,6 +38,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic) float playerRate;
 @property(nonatomic) int overriddenDuration;
 @property(nonatomic) AVPlayerTimeControlStatus lastAvPlayerTimeControlStatus;
+@property(nonatomic) UIView* blackCoverView;
+@property(nonatomic) bool isPremiumBannerDisplay;
 - (void)play;
 - (void)pause;
 - (void)setIsLooping:(bool)isLooping;
@@ -62,6 +64,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setIsLiveStream:(BOOL) isLiveStream;
 - (void)setPipSeekButtonsHidden:(BOOL) isHidden;
 - (void)setIsDisplayPipButtons:(BOOL) isDisplay;
+- (void)setIsPremiumBannerDisplay:(BOOL) isDisplay;
 - (int64_t)absolutePosition;
 - (int64_t) FLTCMTimeToMillis:(CMTime) time;
 
