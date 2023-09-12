@@ -23,6 +23,7 @@ int _seekPosition;
 @implementation BetterPlayer
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super init];
+    [self initBlackCoverView];
     NSAssert(self, @"super init cannot be nil");
     _isInitialized = false;
     _isPlaying = false;
@@ -481,9 +482,8 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
             return;
         }
         
-        if (_blackCoverView) {
-            [_blackCoverView removeFromSuperview];
-        }
+        [self hideBlackCoverView];
+        [self setIsPreparingDatasource:false];
 
         CGSize size = [_player currentItem].presentationSize;
         CGFloat width = size.width;
@@ -766,6 +766,9 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)pictureInPictureControllerWillStopPictureInPicture:(AVPictureInPictureController *)pictureInPictureController  API_AVAILABLE(ios(9.0)){
+    if (_isPreparingDatasource) {
+        [self showBlackCoverView];
+    }
     bool wasPlaying = _isPlaying;
     if (_eventSink != nil) {
         _eventSink(@{@"event" : @"exitingPIP",
@@ -776,30 +779,9 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
 - (void)pictureInPictureControllerWillStartPictureInPicture:(AVPictureInPictureController *)pictureInPictureController {
     if (_isPremiumBannerDisplay) {
-        UIWindow *window = [UIApplication sharedApplication].windows.firstObject;
-        if (window) {
-            UIView *customView = [[UIView alloc] init];
-            customView.translatesAutoresizingMaskIntoConstraints = false;
-            customView.backgroundColor = [UIColor blackColor];
-            _blackCoverView = customView;
-            [window addSubview:customView];
-            // Set up constraints to make the child view fill its parent
-            NSLayoutConstraint *topConstraint = [customView.topAnchor constraintEqualToAnchor:window.topAnchor];
-            NSLayoutConstraint *bottomConstraint = [customView.bottomAnchor constraintEqualToAnchor:window.bottomAnchor];
-            NSLayoutConstraint *leadingConstraint = [customView.leadingAnchor constraintEqualToAnchor:window.leadingAnchor];
-            NSLayoutConstraint *trailingConstraint = [customView.trailingAnchor constraintEqualToAnchor:window.trailingAnchor];
-
-            // Activate the constraints
-            [topConstraint setActive:YES];
-            [bottomConstraint setActive:YES];
-            [leadingConstraint setActive:YES];
-            [trailingConstraint setActive:YES];
-        }
+        [self showBlackCoverView];
     } else {
-        // remove just in case
-        if (_blackCoverView) {
-            [_blackCoverView removeFromSuperview];
-        }
+        [self hideBlackCoverView];
     }
     
     // When change to PIP mode, need to correct control status
@@ -863,6 +845,41 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
   } else {
     [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
   }
+}
+
+- (void) initBlackCoverView {
+    _blackCoverView = NULL;
+    _blackCoverView = [[UIView alloc] init];
+    _blackCoverView.translatesAutoresizingMaskIntoConstraints = false;
+    _blackCoverView.backgroundColor = [UIColor blackColor];
+}
+
+- (void) showBlackCoverView {
+    UIWindow *window = [UIApplication sharedApplication].windows.firstObject;
+    if (window) {
+        [window addSubview:_blackCoverView];
+        // Set up constraints to make the child view fill its parent
+        NSLayoutConstraint *topConstraint = [_blackCoverView.topAnchor constraintEqualToAnchor:window.topAnchor];
+        NSLayoutConstraint *bottomConstraint = [_blackCoverView.bottomAnchor constraintEqualToAnchor:window.bottomAnchor];
+        NSLayoutConstraint *leadingConstraint = [_blackCoverView.leadingAnchor constraintEqualToAnchor:window.leadingAnchor];
+        NSLayoutConstraint *trailingConstraint = [_blackCoverView.trailingAnchor constraintEqualToAnchor:window.trailingAnchor];
+
+        // Activate the constraints
+        [topConstraint setActive:YES];
+        [bottomConstraint setActive:YES];
+        [leadingConstraint setActive:YES];
+        [trailingConstraint setActive:YES];
+    }
+}
+
+- (void) hideBlackCoverView {
+    if (_blackCoverView) {
+        [_blackCoverView removeFromSuperview];
+    }
+}
+
+- (void) setIsPreparingDatasource:(bool)isPreparingDatasource {
+    _isPreparingDatasource = isPreparingDatasource;
 }
 
 

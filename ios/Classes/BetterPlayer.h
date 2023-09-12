@@ -40,6 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic) AVPlayerTimeControlStatus lastAvPlayerTimeControlStatus;
 @property(nonatomic) UIView* blackCoverView;
 @property(nonatomic) bool isPremiumBannerDisplay;
+@property(nonatomic) bool isPreparingDatasource;
 - (void)play;
 - (void)pause;
 - (void)setIsLooping:(bool)isLooping;
@@ -65,6 +66,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setPipSeekButtonsHidden:(BOOL) isHidden;
 - (void)setIsDisplayPipButtons:(BOOL) isDisplay;
 - (void)setIsPremiumBannerDisplay:(BOOL) isDisplay;
+- (void)setIsPreparingDatasource:(bool)isPreparingDatasource;
+- (void)showBlackCoverView;
+- (void)hideBlackCoverView;
 - (int64_t)absolutePosition;
 - (int64_t) FLTCMTimeToMillis:(CMTime) time;
 
