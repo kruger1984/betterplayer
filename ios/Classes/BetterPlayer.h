@@ -66,7 +66,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setPipSeekButtonsHidden:(BOOL) isHidden;
 - (void)setIsDisplayPipButtons:(BOOL) isDisplay;
 - (void)setIsPremiumBannerDisplay:(BOOL) isDisplay;
-- (void)setIsPreparingDatasource:(bool)isPreparingDatasource;
+- (void)setIsPreparingDatasource:(BOOL)isPreparingDatasource;
 - (void)showBlackCoverView;
 - (void)hideBlackCoverView;
 - (int64_t)absolutePosition;

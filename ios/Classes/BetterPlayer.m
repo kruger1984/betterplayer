@@ -858,17 +858,12 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     UIWindow *window = [UIApplication sharedApplication].windows.firstObject;
     if (window) {
         [window addSubview:_blackCoverView];
-        // Set up constraints to make the child view fill its parent
-        NSLayoutConstraint *topConstraint = [_blackCoverView.topAnchor constraintEqualToAnchor:window.topAnchor];
-        NSLayoutConstraint *bottomConstraint = [_blackCoverView.bottomAnchor constraintEqualToAnchor:window.bottomAnchor];
-        NSLayoutConstraint *leadingConstraint = [_blackCoverView.leadingAnchor constraintEqualToAnchor:window.leadingAnchor];
-        NSLayoutConstraint *trailingConstraint = [_blackCoverView.trailingAnchor constraintEqualToAnchor:window.trailingAnchor];
-
-        // Activate the constraints
-        [topConstraint setActive:YES];
-        [bottomConstraint setActive:YES];
-        [leadingConstraint setActive:YES];
-        [trailingConstraint setActive:YES];
+        [NSLayoutConstraint activateConstraints:@[
+           [_blackCoverView.topAnchor constraintEqualToAnchor:window.topAnchor],
+           [_blackCoverView.bottomAnchor constraintEqualToAnchor:window.bottomAnchor],
+           [_blackCoverView.leadingAnchor constraintEqualToAnchor:window.leadingAnchor],
+           [_blackCoverView.trailingAnchor constraintEqualToAnchor:window.trailingAnchor],
+        ]];
     }
 }
 
