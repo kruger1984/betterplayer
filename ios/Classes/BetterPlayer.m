@@ -23,6 +23,7 @@ int _seekPosition;
 @implementation BetterPlayer
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super init];
+    [self initBlackCoverView];
     NSAssert(self, @"super init cannot be nil");
     _isInitialized = false;
     _isPlaying = false;
@@ -480,6 +481,9 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         if (_player.status != AVPlayerStatusReadyToPlay) {
             return;
         }
+        
+        [self hideBlackCoverView];
+        [self setIsPreparingDatasource:false];
 
         CGSize size = [_player currentItem].presentationSize;
         CGFloat width = size.width;
@@ -762,6 +766,9 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)pictureInPictureControllerWillStopPictureInPicture:(AVPictureInPictureController *)pictureInPictureController  API_AVAILABLE(ios(9.0)){
+    if (_isPreparingDatasource) {
+        [self showBlackCoverView];
+    }
     bool wasPlaying = _isPlaying;
     if (_eventSink != nil) {
         _eventSink(@{@"event" : @"exitingPIP",
@@ -771,6 +778,12 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)pictureInPictureControllerWillStartPictureInPicture:(AVPictureInPictureController *)pictureInPictureController {
+    if (_isPremiumBannerDisplay) {
+        [self showBlackCoverView];
+    } else {
+        [self hideBlackCoverView];
+    }
+    
     // When change to PIP mode, need to correct control status
     _lastAvPlayerTimeControlStatus = _player.timeControlStatus;
     if (_eventSink != nil) {
@@ -801,6 +814,10 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     [_pipController setValue:[NSNumber numberWithInt:isDisplay ? 0 : 1] forKey:@"controlsStyle"];
 }
 
+- (void)setIsPremiumBannerDisplay:(BOOL) isDisplay {
+    _isPremiumBannerDisplay = isDisplay;
+}
+
 - (void) setAudioTrack:(NSString*) name index:(int) index{
     AVMediaSelectionGroup *audioSelectionGroup = [[[_player currentItem] asset] mediaSelectionGroupForMediaCharacteristic: AVMediaCharacteristicAudible];
     NSArray* options = audioSelectionGroup.options;
@@ -828,6 +845,36 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
   } else {
     [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
   }
+}
+
+- (void) initBlackCoverView {
+    _blackCoverView = NULL;
+    _blackCoverView = [[UIView alloc] init];
+    _blackCoverView.translatesAutoresizingMaskIntoConstraints = false;
+    _blackCoverView.backgroundColor = [UIColor blackColor];
+}
+
+- (void) showBlackCoverView {
+    UIWindow *window = [UIApplication sharedApplication].windows.firstObject;
+    if (window) {
+        [window addSubview:_blackCoverView];
+        [NSLayoutConstraint activateConstraints:@[
+           [_blackCoverView.topAnchor constraintEqualToAnchor:window.topAnchor],
+           [_blackCoverView.bottomAnchor constraintEqualToAnchor:window.bottomAnchor],
+           [_blackCoverView.leadingAnchor constraintEqualToAnchor:window.leadingAnchor],
+           [_blackCoverView.trailingAnchor constraintEqualToAnchor:window.trailingAnchor],
+        ]];
+    }
+}
+
+- (void) hideBlackCoverView {
+    if (_blackCoverView) {
+        [_blackCoverView removeFromSuperview];
+    }
+}
+
+- (void) setIsPreparingDatasource:(bool)isPreparingDatasource {
+    _isPreparingDatasource = isPreparingDatasource;
 }
 
 

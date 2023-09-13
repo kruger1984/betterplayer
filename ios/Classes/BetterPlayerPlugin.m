@@ -405,7 +405,8 @@ bool _isCommandCenterButtonsEnabled = true;
             [[NSNotificationCenter defaultCenter] removeObserver:self];
             [player clear];
             // This call will clear cached frame because we will return transparent frame
-
+            
+            [player setIsPreparingDatasource:true];
             NSDictionary* dataSource = argsMap[@"dataSource"];
             [_dataSourceDict setObject:dataSource forKey:[self getTextureId:player]];
             NSString* assetArg = dataSource[@"asset"];
@@ -613,6 +614,8 @@ bool _isCommandCenterButtonsEnabled = true;
                 }
             }
             result(nil);
+        } else if ([@"setIsPremiumBannerDisplay" isEqualToString:call.method]){
+            [player setIsPremiumBannerDisplay:[argsMap[@"isDisplay"] boolValue]];
         } else {
             result(FlutterMethodNotImplemented);
         }

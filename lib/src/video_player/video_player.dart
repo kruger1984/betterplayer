@@ -678,6 +678,10 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     value = value.copyWith(duration: duration);
   }
 
+  void setIsPremiumBannerDisplay(bool isDisplay) {
+    _videoPlayerPlatform.setIsPremiumBannerDisplay(_textureId, isDisplay);
+  }
+
   static Future clearCache() async {
     return _videoPlayerPlatform.clearCache();
   }
