@@ -6,7 +6,7 @@ import android.graphics.Bitmap
 class BitmapSingleton private constructor() {
     private var bitmap: Bitmap? = null
 
-    fun setBitmap(newBitmap: Bitmap) {
+    fun setBitmap(newBitmap: Bitmap?) {
         bitmap = newBitmap
     }
 
