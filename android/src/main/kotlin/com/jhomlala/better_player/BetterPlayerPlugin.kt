@@ -565,6 +565,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                     currentNotificationDataSource = dataSource
                     currentNotificationTextureId = textureId
                     removeOtherNotificationListeners()
+                    BitmapSingleton.getInstance().setBitmap(null)
                     setupNotificationParameter(dataSource, betterPlayer)
                     // For Android 13 or later.
                     if (Build.VERSION.SDK_INT > Build.VERSION_CODES.S) {
