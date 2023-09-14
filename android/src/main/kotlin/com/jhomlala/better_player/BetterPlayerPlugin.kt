@@ -566,6 +566,8 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                     currentNotificationTextureId = textureId
                     removeOtherNotificationListeners()
                     BitmapSingleton.getInstance().setBitmap(null)
+                    // cancel existing requests if they are still running.
+                    Picasso.get().cancelRequest(imageDownloadHandler)
                     setupNotificationParameter(dataSource, betterPlayer)
                     // For Android 13 or later.
                     if (Build.VERSION.SDK_INT > Build.VERSION_CODES.S) {
