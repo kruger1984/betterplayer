@@ -131,8 +131,6 @@ bool _isCommandCenterButtonsEnabled = true;
         showNotification = [[dataSource objectForKey:@"showNotification"] boolValue];
     }
 
-    BOOL isExtraVideo = [self isExtraVideo:player];
-
     NSString* title = dataSource[@"title"];
     NSString* author = dataSource[@"author"];
     NSString* imageUrl = dataSource[@"imageUrl"];
@@ -142,10 +140,6 @@ bool _isCommandCenterButtonsEnabled = true;
         [self setupRemoteCommands: player];
         [self setupRemoteCommandNotification: player, title, author, imageUrl];
         [self setupUpdateListener: player, title, author, imageUrl];
-    } else if (isExtraVideo) {
-        // In this case, control center is still alive with old setting
-        // so we need to setup it again with extra video setting
-        [self setupRemoteCommands: player];
     }
 }
 
@@ -180,9 +174,8 @@ bool _isCommandCenterButtonsEnabled = true;
     _isCommandCenterButtonsEnabled = true;
     if (@available(iOS 9.1, *)) {
         BOOL isLiveStream = [self isLiveStream:player];
-        BOOL isExtraVideo = [self isExtraVideo:player];
 
-        [commandCenter.changePlaybackPositionCommand setEnabled: isLiveStream || isExtraVideo ? NO : YES];
+        [commandCenter.changePlaybackPositionCommand setEnabled: isLiveStream ? NO : YES];
     }
 
     // Remove old target handlers
@@ -318,17 +311,6 @@ bool _isCommandCenterButtonsEnabled = true;
     }
 }
 
-- (BOOL) isExtraVideo:(BetterPlayer*) player {
-    NSDictionary* dataSource = [_dataSourceDict objectForKey:[self getTextureId:player]];
-
-    BOOL isExtraVideo = false;
-    id isExtraVideoObject = [dataSource objectForKey:@"isExtraVideo"];
-    if (isExtraVideoObject != [NSNull null]) {
-        isExtraVideo = [[dataSource objectForKey:@"isExtraVideo"] boolValue];
-    }
-    return isExtraVideo;
-}
-
 - (BOOL) isLiveStream:(BetterPlayer*) player {
     NSDictionary* dataSource = [_dataSourceDict objectForKey:[self getTextureId:player]];
 
@@ -418,12 +400,7 @@ bool _isCommandCenterButtonsEnabled = true;
             NSNumber* maxCacheSize = dataSource[@"maxCacheSize"];
             NSString* videoExtension = dataSource[@"videoExtension"];
             
-            if ([self isExtraVideo:player]) {
-                // this command will make [setupRemoteCommands] work again and disable commandCenter.changePlaybackPositionCommand for extra video
-                _remoteCommandsInitialized = false;
-            } else {
-                [self disposeNotificationData:player];
-            }
+            [self disposeNotificationData:player];
             
             BOOL isLiveStream = [self isLiveStream:player];
             [player setPipSeekButtonsHidden:isLiveStream];
@@ -515,12 +492,11 @@ bool _isCommandCenterButtonsEnabled = true;
             [player seekTo:[argsMap[@"location"] intValue]];
 
             if (!_isCommandCenterButtonsEnabled) {
-                BOOL isExtraVideo = [self isExtraVideo:player];
                 BOOL isLiveStream = [self isLiveStream:player];
 
                 [player setIsDisplayPipButtons:true];
                 MPRemoteCommandCenter *commandCenter = [MPRemoteCommandCenter sharedCommandCenter];
-                [commandCenter.changePlaybackPositionCommand setEnabled: isLiveStream || isExtraVideo ? NO : YES];
+                [commandCenter.changePlaybackPositionCommand setEnabled: isLiveStream ? NO : YES];
                 [commandCenter.togglePlayPauseCommand setEnabled:YES];
                 [commandCenter.playCommand setEnabled:YES];
                 [commandCenter.pauseCommand setEnabled:YES];

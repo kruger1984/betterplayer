@@ -490,7 +490,6 @@ class BetterPlayerController {
             showNotification: _betterPlayerDataSource
                 ?.notificationConfiguration?.showNotification,
             isLiveStream: _betterPlayerDataSource?.isLiveStream,
-            isExtraVideo: _betterPlayerDataSource?.isExtraVideo,
             title: _betterPlayerDataSource?.notificationConfiguration?.title,
             author: _betterPlayerDataSource?.notificationConfiguration?.author,
             imageUrl:
@@ -511,7 +510,6 @@ class BetterPlayerController {
               showNotification: _betterPlayerDataSource
                   ?.notificationConfiguration?.showNotification,
               isLiveStream: _betterPlayerDataSource?.isLiveStream,
-              isExtraVideo: _betterPlayerDataSource?.isExtraVideo,
               title: _betterPlayerDataSource?.notificationConfiguration?.title,
               author:
                   _betterPlayerDataSource?.notificationConfiguration?.author,

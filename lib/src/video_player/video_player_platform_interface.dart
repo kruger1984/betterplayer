@@ -240,7 +240,6 @@ class DataSource {
     this.maxCacheFileSize = _maxCacheFileSize,
     this.cacheKey,
     this.showNotification = false,
-    this.isExtraVideo = false,
     this.isLiveStream = false,
     this.title,
     this.author,
@@ -308,8 +307,6 @@ class DataSource {
   final String? cacheKey;
 
   final bool? showNotification;
-
-  final bool? isExtraVideo;
 
   final bool? isLiveStream;
 
