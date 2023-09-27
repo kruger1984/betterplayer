@@ -494,9 +494,6 @@ bool _isCommandCenterButtonsEnabled = true;
         } else if ([@"broadcastEnded" isEqualToString:call.method]) {
             [self itemDidPlayToEndTime:nil];
             result(nil);
-        } else if ([@"limitedPlanVideoReachEnd" isEqualToString:call.method]) {
-            [self itemDidPlayToEndTime:nil];
-            result(nil);
         } else if ([@"setLooping" isEqualToString:call.method]) {
             [player setIsLooping:[argsMap[@"looping"] boolValue]];
             result(nil);

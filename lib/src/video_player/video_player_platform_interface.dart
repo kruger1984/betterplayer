@@ -148,12 +148,6 @@ abstract class VideoPlayerPlatform {
     throw UnimplementedError('broadcastEnded() has not been implemented.');
   }
 
-  /// To process when limited plan video ended.
-  Future<void> limitedPlanVideoReachEnd({int? textureId}) {
-    throw UnimplementedError(
-        'limitedPlanVideoReachEnd() has not been implemented.');
-  }
-
   ///Set up auto PiP transition.
   Future<void> setupAutomaticPictureInPictureTransition({
     int? textureId,

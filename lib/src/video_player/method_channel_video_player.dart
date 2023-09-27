@@ -248,14 +248,6 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Future<void> limitedPlanVideoReachEnd({int? textureId}) async {
-    return _channel.invokeMethod<void>(
-      'limitedPlanVideoReachEnd',
-      <String, dynamic>{'textureId': textureId},
-    );
-  }
-
-  @override
   Future<void> setupAutomaticPictureInPictureTransition({
     int? textureId,
     bool? willStartPIP,
