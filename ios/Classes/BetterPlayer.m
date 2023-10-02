@@ -23,12 +23,13 @@ int _seekPosition;
 @implementation BetterPlayer
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super init];
-    [self initBlackCoverView];
+    [self initLimitedPlanCoverView];
     NSAssert(self, @"super init cannot be nil");
     _isInitialized = false;
     _isPlaying = false;
     _disposed = false;
     _isLiveStream = false;
+    _isPipMode = false;
     _seekPosition = -1;
     _player = [[AVPlayer alloc] init];
     _player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
@@ -482,9 +483,6 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
             return;
         }
         
-        [self hideBlackCoverView];
-        [self setIsPreparingDatasource:false];
-
         CGSize size = [_player currentItem].presentationSize;
         CGFloat width = size.width;
         CGFloat height = size.height;
@@ -687,7 +685,6 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
                 _pipController.canStartPictureInPictureAutomaticallyFromInline = true;
             }
             _pipController.delegate = self;
-            [self setPipSeekButtonsHidden:_isLiveStream];
         }
     } else {
         // Fallback on earlier versions
@@ -766,9 +763,8 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)pictureInPictureControllerWillStopPictureInPicture:(AVPictureInPictureController *)pictureInPictureController  API_AVAILABLE(ios(9.0)){
-    if (_isPreparingDatasource) {
-        [self showBlackCoverView];
-    }
+    [self setIsPipMode:false];
+    
     bool wasPlaying = _isPlaying;
     if (_eventSink != nil) {
         _eventSink(@{@"event" : @"exitingPIP",
@@ -778,10 +774,12 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)pictureInPictureControllerWillStartPictureInPicture:(AVPictureInPictureController *)pictureInPictureController {
+    [self setIsPipMode:true];
+
     if (_isPremiumBannerDisplay) {
-        [self showBlackCoverView];
+        [self showLimitedPlanCoverView];
     } else {
-        [self hideBlackCoverView];
+        [self hideLimitedPlanCoverView];
     }
     
     // When change to PIP mode, need to correct control status
@@ -804,10 +802,6 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
 - (void)setIsLiveStream:(BOOL) isLiveStream {
     _isLiveStream = isLiveStream;
-}
-
-- (void)setPipSeekButtonsHidden:(BOOL) isHidden {
-    _pipController.requiresLinearPlayback = isHidden;
 }
 
 - (void)setIsDisplayPipButtons:(BOOL) isDisplay {
@@ -847,34 +841,36 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
   }
 }
 
-- (void) initBlackCoverView {
-    _blackCoverView = NULL;
-    _blackCoverView = [[UIView alloc] init];
-    _blackCoverView.translatesAutoresizingMaskIntoConstraints = false;
-    _blackCoverView.backgroundColor = [UIColor blackColor];
+- (void) initLimitedPlanCoverView {
+    _limitedPlanCoverView = NULL;
+    _limitedPlanCoverView = [[UIImageView alloc] init];
+    _limitedPlanCoverView.translatesAutoresizingMaskIntoConstraints = false;
+
+    UIImage *image = [UIImage imageNamed:@"miniplayerLimitedContent"];
+    _limitedPlanCoverView.image = image;
 }
 
-- (void) showBlackCoverView {
+- (void) showLimitedPlanCoverView {
     UIWindow *window = [UIApplication sharedApplication].windows.firstObject;
-    if (window) {
-        [window addSubview:_blackCoverView];
+    if (window && _isPipMode) {
+        [window addSubview:_limitedPlanCoverView];
         [NSLayoutConstraint activateConstraints:@[
-           [_blackCoverView.topAnchor constraintEqualToAnchor:window.topAnchor],
-           [_blackCoverView.bottomAnchor constraintEqualToAnchor:window.bottomAnchor],
-           [_blackCoverView.leadingAnchor constraintEqualToAnchor:window.leadingAnchor],
-           [_blackCoverView.trailingAnchor constraintEqualToAnchor:window.trailingAnchor],
+           [_limitedPlanCoverView.topAnchor constraintEqualToAnchor:window.topAnchor],
+           [_limitedPlanCoverView.bottomAnchor constraintEqualToAnchor:window.bottomAnchor],
+           [_limitedPlanCoverView.leadingAnchor constraintEqualToAnchor:window.leadingAnchor],
+           [_limitedPlanCoverView.trailingAnchor constraintEqualToAnchor:window.trailingAnchor],
         ]];
     }
 }
 
-- (void) hideBlackCoverView {
-    if (_blackCoverView) {
-        [_blackCoverView removeFromSuperview];
+- (void) hideLimitedPlanCoverView {
+    if (_limitedPlanCoverView) {
+        [_limitedPlanCoverView removeFromSuperview];
     }
 }
 
-- (void) setIsPreparingDatasource:(bool)isPreparingDatasource {
-    _isPreparingDatasource = isPreparingDatasource;
+- (void) setIsPipMode:(bool)isPipMode {
+    _isPipMode = isPipMode;
 }
 
 

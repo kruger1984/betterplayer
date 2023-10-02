@@ -68,7 +68,6 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'maxCacheFileSize': 0,
           'showNotification': dataSource.showNotification,
           'isLiveStream': dataSource.isLiveStream,
-          'isExtraVideo': dataSource.isExtraVideo,
           'title': dataSource.title,
           'author': dataSource.author,
           'imageUrl': dataSource.imageUrl,
@@ -111,7 +110,6 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'maxCacheFileSize': 0,
           'showNotification': dataSource.showNotification,
           'isLiveStream': dataSource.isLiveStream,
-          'isExtraVideo': dataSource.isExtraVideo,
           'title': dataSource.title,
           'author': dataSource.author,
           'imageUrl': dataSource.imageUrl,
@@ -243,14 +241,6 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   Future<void> broadcastEnded({int? textureId}) async {
     return _channel.invokeMethod<void>(
       'broadcastEnded',
-      <String, dynamic>{'textureId': textureId},
-    );
-  }
-
-  @override
-  Future<void> limitedPlanVideoReachEnd({int? textureId}) async {
-    return _channel.invokeMethod<void>(
-      'limitedPlanVideoReachEnd',
       <String, dynamic>{'textureId': textureId},
     );
   }

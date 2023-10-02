@@ -148,12 +148,6 @@ abstract class VideoPlayerPlatform {
     throw UnimplementedError('broadcastEnded() has not been implemented.');
   }
 
-  /// To process when limited plan video ended.
-  Future<void> limitedPlanVideoReachEnd({int? textureId}) {
-    throw UnimplementedError(
-        'limitedPlanVideoReachEnd() has not been implemented.');
-  }
-
   ///Set up auto PiP transition.
   Future<void> setupAutomaticPictureInPictureTransition({
     int? textureId,
@@ -246,7 +240,6 @@ class DataSource {
     this.maxCacheFileSize = _maxCacheFileSize,
     this.cacheKey,
     this.showNotification = false,
-    this.isExtraVideo = false,
     this.isLiveStream = false,
     this.title,
     this.author,
@@ -314,8 +307,6 @@ class DataSource {
   final String? cacheKey;
 
   final bool? showNotification;
-
-  final bool? isExtraVideo;
 
   final bool? isLiveStream;
 
