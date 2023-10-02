@@ -685,7 +685,6 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
                 _pipController.canStartPictureInPictureAutomaticallyFromInline = true;
             }
             _pipController.delegate = self;
-            [self setPipSeekButtonsHidden:_isLiveStream];
         }
     } else {
         // Fallback on earlier versions
@@ -803,10 +802,6 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
 - (void)setIsLiveStream:(BOOL) isLiveStream {
     _isLiveStream = isLiveStream;
-}
-
-- (void)setPipSeekButtonsHidden:(BOOL) isHidden {
-    _pipController.requiresLinearPlayback = isHidden;
 }
 
 - (void)setIsDisplayPipButtons:(BOOL) isDisplay {
