@@ -793,6 +793,11 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         _eventSink(@{@"event" : @"exitingPIP",
                      @"wasPlaying" : @(wasPlaying),
                    });
+        if (!_isPlaying && !_isLiveStream) {
+            _eventSink(@{@"event" : @"seek",
+                         @"position" : @([self position]),
+                       });
+        }
     }
 }
 
