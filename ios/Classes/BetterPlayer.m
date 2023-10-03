@@ -23,6 +23,7 @@ int _seekPosition;
 @implementation BetterPlayer
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super init];
+    [self initBlackCoverView];
     [self initLimitedPlanCoverView];
     NSAssert(self, @"super init cannot be nil");
     _isInitialized = false;
@@ -784,6 +785,8 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
 - (void)pictureInPictureControllerWillStopPictureInPicture:(AVPictureInPictureController *)pictureInPictureController  API_AVAILABLE(ios(9.0)){
     [self setIsPipMode:false];
+    [self hideBlackCoverView];
+    [self hideLimitedPlanCoverView];
     
     bool wasPlaying = _isPlaying;
     if (_eventSink != nil) {
@@ -859,6 +862,32 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
   } else {
     [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
   }
+}
+
+- (void) initBlackCoverView {
+    _blackCoverView = NULL;
+    _blackCoverView = [[UIView alloc] init];
+    _blackCoverView.translatesAutoresizingMaskIntoConstraints = false;
+    _blackCoverView.backgroundColor = [UIColor blackColor];
+}
+
+- (void) showBlackCoverView {
+    UIWindow *window = [UIApplication sharedApplication].windows.firstObject;
+    if (window && _isPipMode) {
+        [window addSubview:_blackCoverView];
+        [NSLayoutConstraint activateConstraints:@[
+            [_blackCoverView.topAnchor constraintEqualToAnchor:window.topAnchor],
+            [_blackCoverView.bottomAnchor constraintEqualToAnchor:window.bottomAnchor],
+            [_blackCoverView.leadingAnchor constraintEqualToAnchor:window.leadingAnchor],
+            [_blackCoverView.trailingAnchor constraintEqualToAnchor:window.trailingAnchor],
+        ]];
+    }
+}
+
+- (void) hideBlackCoverView {
+    if (_blackCoverView) {
+        [_blackCoverView removeFromSuperview];
+    }
 }
 
 - (void) initLimitedPlanCoverView {

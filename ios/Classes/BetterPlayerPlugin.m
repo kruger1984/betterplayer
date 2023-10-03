@@ -388,6 +388,7 @@ bool _isCommandCenterButtonsEnabled = true;
             [player clear];
             // This call will clear cached frame because we will return transparent frame
             
+            [player showBlackCoverView];
             NSDictionary* dataSource = argsMap[@"dataSource"];
             [_dataSourceDict setObject:dataSource forKey:[self getTextureId:player]];
             NSString* assetArg = dataSource[@"asset"];
@@ -586,6 +587,8 @@ bool _isCommandCenterButtonsEnabled = true;
             }
             result(nil);
         } else if ([@"setIsPremiumBannerDisplay" isEqualToString:call.method]){
+            [player hideBlackCoverView];
+
             BOOL isDisplay = false;
             id isDisplayObject = [argsMap objectForKey:@"isDisplay"];
 
