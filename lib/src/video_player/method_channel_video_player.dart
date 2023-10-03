@@ -483,6 +483,13 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
             key: key,
           );
 
+        case 'playbackStatusChangeInPiP':
+          return VideoEvent(
+            eventType: VideoEventType.playbackStatusChangeInPiP,
+            position: Duration(milliseconds: map['position'] as int),
+            key: key,
+          );
+
         default:
           return VideoEvent(
             eventType: VideoEventType.unknown,

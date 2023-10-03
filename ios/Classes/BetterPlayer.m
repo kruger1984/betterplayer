@@ -71,6 +71,11 @@ int _seekPosition;
                                                  selector:@selector(itemFailedToPlayToEndTime:)
                                                      name:AVPlayerItemFailedToPlayToEndTimeNotification
                                                    object:item];
+        
+        // use CMTimeMake(1000000, 1) to only invoking the block whenever time jumps or playback starts or stops. (Doc: https://developer.apple.com/documentation/avfoundation/avplayer/1385829-addperiodictimeobserverforinterv#discussion)
+        _timeObserverId = [_player addPeriodicTimeObserverForInterval:CMTimeMake(1000000, 1) queue:NULL usingBlock:^(CMTime time){
+           [self notifyPlaybackChangeInPiP];
+        }];
         self._observersAdded = true;
     }
 }
@@ -113,7 +118,22 @@ int _seekPosition;
                                    forKeyPath:@"playbackBufferFull"
                                       context:playbackBufferFullContext];
         [[NSNotificationCenter defaultCenter] removeObserver:self];
+        
+        if (_timeObserverId) {
+            [_player removeTimeObserver:_timeObserverId];
+            _timeObserverId = nil;
+        }
         self._observersAdded = false;
+    }
+}
+
+- (void)notifyPlaybackChangeInPiP {
+    int64_t position = [self position];
+    
+    if (_isPipMode && !_isLiveStream && position >= 0) {
+        if (_eventSink) {
+            _eventSink(@{@"event" : @"playbackStatusChangeInPiP", @"position": @(position)});
+        }
     }
 }
 
