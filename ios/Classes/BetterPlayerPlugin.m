@@ -381,6 +381,11 @@ bool _isCommandCenterButtonsEnabled = true;
         [self onPlayerSetup:player result:result];
     } else {
         NSDictionary* argsMap = call.arguments;
+        id textureIdObject = [argsMap objectForKey:@"textureId"];
+        
+        if (textureIdObject == [NSNull null]) {
+            return;
+        }
         int64_t textureId = ((NSNumber*)argsMap[@"textureId"]).unsignedIntegerValue;
         BetterPlayer* player = _players[@(textureId)];
         if ([@"setDataSource" isEqualToString:call.method]) {
