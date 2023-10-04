@@ -393,7 +393,7 @@ bool _isCommandCenterButtonsEnabled = true;
             [player clear];
             // This call will clear cached frame because we will return transparent frame
             
-            [player showBlackCoverView];
+            [player showBlackCoverViewInPIP];
             NSDictionary* dataSource = argsMap[@"dataSource"];
             [_dataSourceDict setObject:dataSource forKey:[self getTextureId:player]];
             NSString* assetArg = dataSource[@"asset"];
@@ -602,7 +602,7 @@ bool _isCommandCenterButtonsEnabled = true;
                 
                 if (player.isPremiumBannerDisplay != isDisplay) {
                     if (isDisplay) {
-                        [player showLimitedPlanCoverView];
+                        [player showLimitedPlanCoverViewInPiP];
                     } else {
                         [player hideLimitedPlanCoverView];
                     }

@@ -67,9 +67,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setIsLiveStream:(BOOL) isLiveStream;
 - (void)setIsDisplayPipButtons:(BOOL) isDisplay;
 - (void)setIsPremiumBannerDisplay:(BOOL) isDisplay;
-- (void)showBlackCoverView;
+- (void)showBlackCoverViewInPIP;
 - (void)hideBlackCoverView;
-- (void)showLimitedPlanCoverView;
+- (void)showLimitedPlanCoverViewInPiP;
 - (void)hideLimitedPlanCoverView;
 - (int64_t)absolutePosition;
 - (int64_t) FLTCMTimeToMillis:(CMTime) time;

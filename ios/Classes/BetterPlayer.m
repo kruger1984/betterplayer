@@ -805,7 +805,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     [self setIsPipMode:true];
 
     if (_isPremiumBannerDisplay) {
-        [self showLimitedPlanCoverView];
+        [self showLimitedPlanCoverViewInPiP];
     } else {
         [self hideLimitedPlanCoverView];
     }
@@ -876,7 +876,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     _blackCoverView.backgroundColor = [UIColor blackColor];
 }
 
-- (void) showBlackCoverView {
+- (void) showBlackCoverViewInPIP {
     UIWindow *window = [UIApplication sharedApplication].windows.firstObject;
     if (window && _isPipMode) {
         [window addSubview:_blackCoverView];
@@ -904,7 +904,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     _limitedPlanCoverView.image = image;
 }
 
-- (void) showLimitedPlanCoverView {
+- (void) showLimitedPlanCoverViewInPiP {
     UIWindow *window = [UIApplication sharedApplication].windows.firstObject;
     if (window && _isPipMode) {
         [window addSubview:_limitedPlanCoverView];
