@@ -602,9 +602,9 @@ bool _isCommandCenterButtonsEnabled = true;
                 
                 if (player.isPremiumBannerDisplay != isDisplay) {
                     if (isDisplay) {
-                        [player showLimitedPlanCoverViewInPiP];
+                        [player showLimitedPlanCoverViewInPIP];
                     } else {
-                        [player hideLimitedPlanCoverView];
+                        [player hideLimitedPlanCoverViewInPIP];
                     }
                 }
                 [player setIsPremiumBannerDisplay:isDisplay];

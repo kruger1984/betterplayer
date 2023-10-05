@@ -786,7 +786,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 - (void)pictureInPictureControllerWillStopPictureInPicture:(AVPictureInPictureController *)pictureInPictureController  API_AVAILABLE(ios(9.0)){
     [self setIsPipMode:false];
     [self hideBlackCoverView];
-    [self hideLimitedPlanCoverView];
+    [self hideLimitedPlanCoverViewInPIP];
     
     bool wasPlaying = _isPlaying;
     if (_eventSink != nil) {
@@ -805,9 +805,9 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     [self setIsPipMode:true];
 
     if (_isPremiumBannerDisplay) {
-        [self showLimitedPlanCoverViewInPiP];
+        [self showLimitedPlanCoverViewInPIP];
     } else {
-        [self hideLimitedPlanCoverView];
+        [self hideLimitedPlanCoverViewInPIP];
     }
     
     // When change to PIP mode, need to correct control status
@@ -904,7 +904,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     _limitedPlanCoverView.image = image;
 }
 
-- (void) showLimitedPlanCoverViewInPiP {
+- (void) showLimitedPlanCoverViewInPIP {
     UIWindow *window = [UIApplication sharedApplication].windows.firstObject;
     if (window && _isPipMode) {
         [window addSubview:_limitedPlanCoverView];
@@ -917,7 +917,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     }
 }
 
-- (void) hideLimitedPlanCoverView {
+- (void) hideLimitedPlanCoverViewInPIP {
     if (_limitedPlanCoverView) {
         [_limitedPlanCoverView removeFromSuperview];
     }

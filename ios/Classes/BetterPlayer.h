@@ -69,8 +69,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setIsPremiumBannerDisplay:(BOOL) isDisplay;
 - (void)showBlackCoverViewInPIP;
 - (void)hideBlackCoverView;
-- (void)showLimitedPlanCoverViewInPiP;
-- (void)hideLimitedPlanCoverView;
+- (void)showLimitedPlanCoverViewInPIP;
+- (void)hideLimitedPlanCoverViewInPIP;
 - (int64_t)absolutePosition;
 - (int64_t) FLTCMTimeToMillis:(CMTime) time;
 
