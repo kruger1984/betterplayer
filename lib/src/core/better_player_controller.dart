@@ -1211,6 +1211,7 @@ class BetterPlayerController {
           BetterPlayerEventType.exitingPIP,
           parameters: <String, dynamic>{
             _wasPlayingParameter: event.wasPlaying,
+            _progressParameter: event.position,
           },
         ));
         break;
