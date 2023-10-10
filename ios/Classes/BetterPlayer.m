@@ -23,6 +23,7 @@ int _seekPosition;
 @implementation BetterPlayer
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super init];
+    [self initBlackCoverView];
     [self initLimitedPlanCoverView];
     NSAssert(self, @"super init cannot be nil");
     _isInitialized = false;
@@ -71,6 +72,11 @@ int _seekPosition;
                                                  selector:@selector(itemFailedToPlayToEndTime:)
                                                      name:AVPlayerItemFailedToPlayToEndTimeNotification
                                                    object:item];
+        
+        // use CMTimeMake(1000000, 1) to only invoking the block whenever time jumps or playback starts or stops. (Doc: https://developer.apple.com/documentation/avfoundation/avplayer/1385829-addperiodictimeobserverforinterv#discussion)
+        _timeObserverId = [_player addPeriodicTimeObserverForInterval:CMTimeMake(1000000, 1) queue:NULL usingBlock:^(CMTime time){
+           [self notifyPlaybackChangeInPiP];
+        }];
         self._observersAdded = true;
     }
 }
@@ -113,7 +119,22 @@ int _seekPosition;
                                    forKeyPath:@"playbackBufferFull"
                                       context:playbackBufferFullContext];
         [[NSNotificationCenter defaultCenter] removeObserver:self];
+        
+        if (_timeObserverId) {
+            [_player removeTimeObserver:_timeObserverId];
+            _timeObserverId = nil;
+        }
         self._observersAdded = false;
+    }
+}
+
+- (void)notifyPlaybackChangeInPiP {
+    int64_t position = [self position];
+    
+    if (_isPipMode && position >= 0) {
+        if (_eventSink) {
+            _eventSink(@{@"event" : @"playbackStatusChangeInPiP", @"position": @(position)});
+        }
     }
 }
 
@@ -764,11 +785,14 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
 - (void)pictureInPictureControllerWillStopPictureInPicture:(AVPictureInPictureController *)pictureInPictureController  API_AVAILABLE(ios(9.0)){
     [self setIsPipMode:false];
+    [self hideBlackCoverView];
+    [self hideLimitedPlanCoverViewInPIP];
     
     bool wasPlaying = _isPlaying;
     if (_eventSink != nil) {
         _eventSink(@{@"event" : @"exitingPIP",
                      @"wasPlaying" : @(wasPlaying),
+                     @"position" : @([self position]),
                    });
     }
 }
@@ -777,9 +801,9 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     [self setIsPipMode:true];
 
     if (_isPremiumBannerDisplay) {
-        [self showLimitedPlanCoverView];
+        [self showLimitedPlanCoverViewInPIP];
     } else {
-        [self hideLimitedPlanCoverView];
+        [self hideLimitedPlanCoverViewInPIP];
     }
     
     // When change to PIP mode, need to correct control status
@@ -841,6 +865,32 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
   }
 }
 
+- (void) initBlackCoverView {
+    _blackCoverView = NULL;
+    _blackCoverView = [[UIView alloc] init];
+    _blackCoverView.translatesAutoresizingMaskIntoConstraints = false;
+    _blackCoverView.backgroundColor = [UIColor blackColor];
+}
+
+- (void) showBlackCoverViewInPIP {
+    UIWindow *window = [UIApplication sharedApplication].windows.firstObject;
+    if (window && _isPipMode) {
+        [window addSubview:_blackCoverView];
+        [NSLayoutConstraint activateConstraints:@[
+            [_blackCoverView.topAnchor constraintEqualToAnchor:window.topAnchor],
+            [_blackCoverView.bottomAnchor constraintEqualToAnchor:window.bottomAnchor],
+            [_blackCoverView.leadingAnchor constraintEqualToAnchor:window.leadingAnchor],
+            [_blackCoverView.trailingAnchor constraintEqualToAnchor:window.trailingAnchor],
+        ]];
+    }
+}
+
+- (void) hideBlackCoverView {
+    if (_blackCoverView) {
+        [_blackCoverView removeFromSuperview];
+    }
+}
+
 - (void) initLimitedPlanCoverView {
     _limitedPlanCoverView = NULL;
     _limitedPlanCoverView = [[UIImageView alloc] init];
@@ -850,7 +900,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     _limitedPlanCoverView.image = image;
 }
 
-- (void) showLimitedPlanCoverView {
+- (void) showLimitedPlanCoverViewInPIP {
     UIWindow *window = [UIApplication sharedApplication].windows.firstObject;
     if (window && _isPipMode) {
         [window addSubview:_limitedPlanCoverView];
@@ -863,7 +913,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     }
 }
 
-- (void) hideLimitedPlanCoverView {
+- (void) hideLimitedPlanCoverViewInPIP {
     if (_limitedPlanCoverView) {
         [_limitedPlanCoverView removeFromSuperview];
     }

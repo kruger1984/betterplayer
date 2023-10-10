@@ -457,6 +457,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
             eventType: VideoEventType.exitingPIP,
             key: key,
             wasPlaying: map['wasPlaying'] as bool?,
+            position: Duration(milliseconds: map['position'] as int),
           );
 
         case 'tapExternalPlayButton':
@@ -480,6 +481,13 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
         case 'pressedBackToAppButton':
           return VideoEvent(
             eventType: VideoEventType.pressedBackToAppButton,
+            key: key,
+          );
+
+        case 'playbackStatusChangeInPiP':
+          return VideoEvent(
+            eventType: VideoEventType.playbackStatusChangeInPiP,
+            position: Duration(milliseconds: map['position'] as int),
             key: key,
           );
 

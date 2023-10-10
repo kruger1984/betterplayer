@@ -381,6 +381,11 @@ bool _isCommandCenterButtonsEnabled = true;
         [self onPlayerSetup:player result:result];
     } else {
         NSDictionary* argsMap = call.arguments;
+        id textureIdObject = [argsMap objectForKey:@"textureId"];
+        
+        if (textureIdObject == [NSNull null]) {
+            return;
+        }
         int64_t textureId = ((NSNumber*)argsMap[@"textureId"]).unsignedIntegerValue;
         BetterPlayer* player = _players[@(textureId)];
         if ([@"setDataSource" isEqualToString:call.method]) {
@@ -388,6 +393,7 @@ bool _isCommandCenterButtonsEnabled = true;
             [player clear];
             // This call will clear cached frame because we will return transparent frame
             
+            [player showBlackCoverViewInPIP];
             NSDictionary* dataSource = argsMap[@"dataSource"];
             [_dataSourceDict setObject:dataSource forKey:[self getTextureId:player]];
             NSString* assetArg = dataSource[@"asset"];
@@ -586,6 +592,8 @@ bool _isCommandCenterButtonsEnabled = true;
             }
             result(nil);
         } else if ([@"setIsPremiumBannerDisplay" isEqualToString:call.method]){
+            [player hideBlackCoverView];
+
             BOOL isDisplay = false;
             id isDisplayObject = [argsMap objectForKey:@"isDisplay"];
 
@@ -594,9 +602,9 @@ bool _isCommandCenterButtonsEnabled = true;
                 
                 if (player.isPremiumBannerDisplay != isDisplay) {
                     if (isDisplay) {
-                        [player showLimitedPlanCoverView];
+                        [player showLimitedPlanCoverViewInPIP];
                     } else {
-                        [player hideLimitedPlanCoverView];
+                        [player hideLimitedPlanCoverViewInPIP];
                     }
                 }
                 [player setIsPremiumBannerDisplay:isDisplay];

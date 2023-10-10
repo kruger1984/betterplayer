@@ -38,9 +38,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic) float playerRate;
 @property(nonatomic) int overriddenDuration;
 @property(nonatomic) AVPlayerTimeControlStatus lastAvPlayerTimeControlStatus;
+@property(nonatomic) UIView* blackCoverView;
 @property(nonatomic) UIImageView* limitedPlanCoverView;
 @property(nonatomic) bool isPremiumBannerDisplay;
 @property(nonatomic) bool isPipMode;
+@property(nonatomic) id timeObserverId;
 - (void)play;
 - (void)pause;
 - (void)setIsLooping:(bool)isLooping;
@@ -65,8 +67,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setIsLiveStream:(BOOL) isLiveStream;
 - (void)setIsDisplayPipButtons:(BOOL) isDisplay;
 - (void)setIsPremiumBannerDisplay:(BOOL) isDisplay;
-- (void)showLimitedPlanCoverView;
-- (void)hideLimitedPlanCoverView;
+- (void)showBlackCoverViewInPIP;
+- (void)hideBlackCoverView;
+- (void)showLimitedPlanCoverViewInPIP;
+- (void)hideLimitedPlanCoverViewInPIP;
 - (int64_t)absolutePosition;
 - (int64_t) FLTCMTimeToMillis:(CMTime) time;
 

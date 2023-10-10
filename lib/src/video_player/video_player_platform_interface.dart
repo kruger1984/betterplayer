@@ -515,6 +515,9 @@ enum VideoEventType {
 
   /// back to app button ( right button in pip mode) was pressed (iOS only)
   pressedBackToAppButton,
+
+  /// iOS only. Trigger whenever playback jumps or starts or stops in PiP mode.
+  playbackStatusChangeInPiP,
 }
 
 /// Describes a discrete segment of time within a video using a [start] and
