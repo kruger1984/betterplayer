@@ -39,8 +39,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic) int overriddenDuration;
 @property(nonatomic) AVPlayerTimeControlStatus lastAvPlayerTimeControlStatus;
 @property(nonatomic) UIView* blackCoverView;
+@property(nonatomic) UIImageView* limitedPlanCoverView;
 @property(nonatomic) bool isPremiumBannerDisplay;
-@property(nonatomic) bool isPreparingDatasource;
+@property(nonatomic) bool isPipMode;
+@property(nonatomic) id timeObserverId;
 - (void)play;
 - (void)pause;
 - (void)setIsLooping:(bool)isLooping;
@@ -63,12 +65,12 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)disablePictureInPicture;
 - (void)willStartPictureInPicture:(bool)willStart;
 - (void)setIsLiveStream:(BOOL) isLiveStream;
-- (void)setPipSeekButtonsHidden:(BOOL) isHidden;
 - (void)setIsDisplayPipButtons:(BOOL) isDisplay;
 - (void)setIsPremiumBannerDisplay:(BOOL) isDisplay;
-- (void)setIsPreparingDatasource:(BOOL)isPreparingDatasource;
-- (void)showBlackCoverView;
+- (void)showBlackCoverViewInPIP;
 - (void)hideBlackCoverView;
+- (void)showLimitedPlanCoverViewInPIP;
+- (void)hideLimitedPlanCoverViewInPIP;
 - (int64_t)absolutePosition;
 - (int64_t) FLTCMTimeToMillis:(CMTime) time;
 

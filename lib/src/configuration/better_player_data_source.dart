@@ -76,16 +76,12 @@ class BetterPlayerDataSource {
   ///platform.
   final BetterPlayerBufferingConfiguration bufferingConfiguration;
 
-  ///Currently using for PiP plan limited video. Used only in iOS.
-  final bool? isExtraVideo;
-
   BetterPlayerDataSource(
     this.type,
     this.url, {
     this.bytes,
     this.subtitles,
     this.isLiveStream = false,
-    this.isExtraVideo = false,
     this.headers,
     this.useAsmsSubtitles = true,
     this.useAsmsTracks = true,
@@ -159,7 +155,6 @@ class BetterPlayerDataSource {
     bool? useAsmsSubtitles,
     bool? useAsmsTracks,
     bool? isLiveStream,
-    bool? isExtraVideo,
     Map<String, String>? qualities,
     BetterPlayerCacheConfiguration? cacheConfiguration,
     BetterPlayerNotificationConfiguration? notificationConfiguration,
@@ -173,7 +168,6 @@ class BetterPlayerDataSource {
       useAsmsSubtitles: useAsmsSubtitles,
       useAsmsTracks: useAsmsTracks,
       isLiveStream: isLiveStream,
-      isExtraVideo: isExtraVideo,
       resolutions: qualities,
       cacheConfiguration: cacheConfiguration,
       notificationConfiguration: notificationConfiguration =
@@ -192,7 +186,6 @@ class BetterPlayerDataSource {
     bool? useAsmsSubtitles,
     bool? useAsmsTracks,
     bool? isLiveStream,
-    bool? isExtraVideo,
     Map<String, String>? qualities,
     BetterPlayerCacheConfiguration? cacheConfiguration,
     BetterPlayerNotificationConfiguration? notificationConfiguration,
@@ -208,7 +201,6 @@ class BetterPlayerDataSource {
       useAsmsSubtitles: useAsmsSubtitles,
       useAsmsTracks: useAsmsTracks,
       isLiveStream: isLiveStream,
-      isExtraVideo: isExtraVideo,
       resolutions: qualities,
       cacheConfiguration: cacheConfiguration,
       notificationConfiguration: notificationConfiguration =
@@ -224,7 +216,6 @@ class BetterPlayerDataSource {
     List<int>? bytes,
     List<BetterPlayerSubtitlesSource>? subtitles,
     bool? isLiveStream,
-    bool? isExtraVideo,
     Map<String, String>? headers,
     bool? useAsmsSubtitles,
     bool? useAsmsTracks,
@@ -247,7 +238,6 @@ class BetterPlayerDataSource {
       bytes: bytes ?? this.bytes,
       subtitles: subtitles ?? this.subtitles,
       isLiveStream: isLiveStream ?? this.isLiveStream,
-      isExtraVideo: isExtraVideo ?? this.isExtraVideo,
       headers: headers ?? this.headers,
       useAsmsSubtitles: useAsmsSubtitles ?? this.useAsmsSubtitles,
       useAsmsTracks: useAsmsTracks ?? this.useAsmsTracks,
