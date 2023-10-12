@@ -409,6 +409,7 @@ bool _isCommandCenterButtonsEnabled = true;
             [self disposeNotificationData:player];
             
             BOOL isLiveStream = [self isLiveStream:player];
+            [player setPipSeekButtonsHidden:isLiveStream];
             [player setIsLiveStream:isLiveStream];
 
             int overriddenDuration = 0;
