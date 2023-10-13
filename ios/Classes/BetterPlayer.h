@@ -65,6 +65,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)disablePictureInPicture;
 - (void)willStartPictureInPicture:(bool)willStart;
 - (void)setIsLiveStream:(BOOL) isLiveStream;
+- (void)setPipSeekButtonsHidden:(BOOL) isHidden;
 - (void)setIsDisplayPipButtons:(BOOL) isDisplay;
 - (void)setIsPremiumBannerDisplay:(BOOL) isDisplay;
 - (void)showBlackCoverViewInPIP;
