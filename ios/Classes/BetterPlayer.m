@@ -75,7 +75,7 @@ int _seekPosition;
         
         // use CMTimeMake(1000000, 1) to only invoking the block whenever time jumps or playback starts or stops. (Doc: https://developer.apple.com/documentation/avfoundation/avplayer/1385829-addperiodictimeobserverforinterv#discussion)
         _timeObserverId = [_player addPeriodicTimeObserverForInterval:CMTimeMake(1000000, 1) queue:NULL usingBlock:^(CMTime time){
-           [self notifyPlaybackChangeInPiP];
+           [self notifyPlaybackChangeInPIPforVOD];
         }];
         self._observersAdded = true;
     }
@@ -128,12 +128,12 @@ int _seekPosition;
     }
 }
 
-- (void)notifyPlaybackChangeInPiP {
+- (void)notifyPlaybackChangeInPIPforVOD {
     int64_t position = [self position];
     
-    if (_isPipMode && position >= 0) {
+    if (_isPipMode && !_isLiveStream && position >= 0) {
         if (_eventSink) {
-            _eventSink(@{@"event" : @"playbackStatusChangeInPiP", @"position": @(position)});
+            _eventSink(@{@"event" : @"playbackStatusChangeInPIPforVOD", @"position": @(position)});
         }
     }
 }

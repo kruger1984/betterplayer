@@ -34,5 +34,5 @@ enum BetterPlayerEventType {
   tapExternalPauseButton, // Android only. Fire when tap pause button from outside the app (e.g. PIP, Notification).
   finishedPlayInLooping, // Ios only. Trigger when postion = duration in looping mode,
   pressedBackToAppButton, // Ios only. Trigger when back to app button ( right button in pip mode) was pressed
-  playbackStatusChangeInPiP, // iOS only. Trigger whenever playback jumps or starts or stops in PiP mode.
+  playbackStatusChangeInPIPforVOD, // iOS only. VOD only. Trigger whenever playback jumps or starts or stops in PiP mode.
 }

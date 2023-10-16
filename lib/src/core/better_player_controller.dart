@@ -1233,9 +1233,9 @@ class BetterPlayerController {
         _postEvent(
             BetterPlayerEvent(BetterPlayerEventType.pressedBackToAppButton));
         break;
-      case VideoEventType.playbackStatusChangeInPiP:
+      case VideoEventType.playbackStatusChangeInPIPforVOD:
         _postEvent(BetterPlayerEvent(
-          BetterPlayerEventType.playbackStatusChangeInPiP,
+          BetterPlayerEventType.playbackStatusChangeInPIPforVOD,
           parameters: <String, dynamic>{
             _progressParameter: event.position,
           },
