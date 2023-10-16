@@ -257,6 +257,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           break;
         case VideoEventType.exitingPIP:
           break;
+        case VideoEventType.playbackStatusChangeInPIPforVOD:
+          value = value.copyWith(position: event.position);
+          break;
         case VideoEventType.unknown:
           break;
       }

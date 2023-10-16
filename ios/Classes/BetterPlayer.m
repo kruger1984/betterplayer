@@ -131,7 +131,7 @@ int _seekPosition;
 - (void)notifyPlaybackChangeInPiP {
     int64_t position = [self position];
     
-    if (_isPipMode && position >= 0) {
+    if (_isPipMode && !_isLiveStream && position >= 0) {
         if (_eventSink) {
             _eventSink(@{@"event" : @"playbackStatusChangeInPiP", @"position": @(position)});
         }
