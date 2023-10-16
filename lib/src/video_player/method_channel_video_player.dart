@@ -484,9 +484,9 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
             key: key,
           );
 
-        case 'playbackStatusChangeInPiP':
+        case 'playbackStatusChangeInPIPforVOD':
           return VideoEvent(
-            eventType: VideoEventType.playbackStatusChangeInPiP,
+            eventType: VideoEventType.playbackStatusChangeInPIPforVOD,
             position: Duration(milliseconds: map['position'] as int),
             key: key,
           );
