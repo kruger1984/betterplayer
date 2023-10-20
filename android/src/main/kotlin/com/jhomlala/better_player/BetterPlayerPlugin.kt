@@ -145,6 +145,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                 CustomActions.PLAY.rawValue -> {
                     currentPlayer?.tapExternalPlayButton()
                 }
+
                 CustomActions.PAUSE.rawValue -> {
                     currentPlayer?.tapExternalPauseButton()
                 }
@@ -302,6 +303,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                 videoPlayers.put(handle.id(), player)
                 registerBroadcastReceiverForExternalAction()
             }
+
             PRE_CACHE_METHOD -> preCache(call, result)
             STOP_PRE_CACHE_METHOD -> stopPreCache(call, result)
             CLEAR_CACHE_METHOD -> clearCache(result)
@@ -331,14 +333,17 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             SET_DATA_SOURCE_METHOD -> {
                 setDataSource(call, result, player)
             }
+
             SET_LOOPING_METHOD -> {
                 player.setLooping(call.argument(LOOPING_PARAMETER)!!)
                 result.success(null)
             }
+
             SET_VOLUME_METHOD -> {
                 player.setVolume(call.argument(VOLUME_PARAMETER)!!)
                 result.success(null)
             }
+
             PLAY_METHOD -> {
                 currentPlayer = player
                 isVideoPlaybackEnded = false
@@ -346,31 +351,38 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                 player.play()
                 result.success(null)
             }
+
             PAUSE_METHOD -> {
                 player.pause()
                 result.success(null)
             }
+
             BROADCAST_ENDED -> {
                 setAsVideoPlaybackEnded()
                 result.success(null)
             }
+
             SEEK_TO_METHOD -> {
                 val location = (call.argument<Any>(LOCATION_PARAMETER) as Number?)!!.toInt()
                 player.seekTo(location)
                 result.success(null)
             }
+
             POSITION_METHOD -> {
                 result.success(player.position)
                 player.sendBufferingUpdate(false)
             }
+
             ABSOLUTE_POSITION_METHOD -> result.success(player.absolutePosition)
             GET_DVR_DURATION_METHOD -> {
                 result.success(player.getDuration())
             }
+
             SET_SPEED_METHOD -> {
                 player.setSpeed(call.argument(SPEED_PARAMETER)!!)
                 result.success(null)
             }
+
             SET_TRACK_PARAMETERS_METHOD -> {
                 player.setTrackParameters(
                     call.argument(WIDTH_PARAMETER)!!,
@@ -379,25 +391,31 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                 )
                 result.success(null)
             }
+
             SETUP_AUTOMATIC_PICTURE_IN_PICTURE_TRANSITION -> {
                 val willStartPIP = call.argument<Boolean?>(WILL_START_PIP)!!
                 setupAutomaticPictureInPictureTransition(willStartPIP)
                 result.success(null)
             }
+
             ENABLE_PICTURE_IN_PICTURE_METHOD -> {
                 enablePictureInPicture(player)
                 result.success(null)
             }
+
             DISABLE_PICTURE_IN_PICTURE_METHOD -> {
                 disablePictureInPicture(player)
                 result.success(null)
             }
+
             IS_PICTURE_IN_PICTURE_SUPPORTED_METHOD -> result.success(
                 isPictureInPictureSupported()
             )
+
             IS_PICTURE_IN_PICTURE -> result.success(
                 activity!!.isInPictureInPictureMode
             )
+
             SET_AUDIO_TRACK_METHOD -> {
                 val name = call.argument<String?>(NAME_PARAMETER)
                 val index = call.argument<Int?>(INDEX_PARAMETER)
@@ -406,6 +424,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                 }
                 result.success(null)
             }
+
             SET_MIX_WITH_OTHERS_METHOD -> {
                 val mixWitOthers = call.argument<Boolean?>(
                     MIX_WITH_OTHERS_PARAMETER
@@ -414,10 +433,12 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                     player.setMixWithOthers(mixWitOthers)
                 }
             }
+
             DISPOSE_METHOD -> {
                 dispose(player, textureId)
                 result.success(null)
             }
+
             else -> result.notImplemented()
         }
     }
@@ -591,7 +612,8 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             val title = getParameter(dataSource, TITLE_PARAMETER, "")
             val author = getParameter(dataSource, AUTHOR_PARAMETER, "")
             val imageUrl = getParameter(dataSource, IMAGE_URL_PARAMETER, "")
-            val isHideSeekbarNotification = getParameter(dataSource, IS_HIDE_SEEKBAR_NOTIFICATION, true)
+            val isHideSeekbarNotification =
+                getParameter(dataSource, IS_HIDE_SEEKBAR_NOTIFICATION, true)
             val mediaSession =
                 betterPlayer.setupMediaSession(
                     context,
@@ -608,17 +630,17 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                     metaData
                         .putString(MediaMetadata.METADATA_KEY_ARTIST, author)
                         .putString(MediaMetadata.METADATA_KEY_TITLE, title)
-                    }
+                }
 
-                    iconBitmap?.let {
-                        metaData.putBitmap(MediaMetadata.METADATA_KEY_ART, it)
-                    } ?: run {
-                        if (imageUrl.isNotBlank()) {
-                            Picasso.get().load(imageUrl).into(imageDownloadHandler)
-                        }
+                iconBitmap?.let {
+                    metaData.putBitmap(MediaMetadata.METADATA_KEY_ART, it)
+                } ?: run {
+                    if (imageUrl.isNotBlank()) {
+                        Picasso.get().load(imageUrl).into(imageDownloadHandler)
                     }
+                }
 
-                val duration = isHideSeekbarNotification ? -1L : betterPlayer.getDuration()
+                val duration = if (isHideSeekbarNotification) -1L else betterPlayer.getDuration()
                 metaData.putLong(MediaMetadata.METADATA_KEY_DURATION, duration)
                 session.setMetadata(metaData.build())
 
@@ -869,8 +891,6 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         private val PIP_ASPECT_RATIO = Rational(16, 9)
         const val IS_HIDE_SEEKBAR_NOTIFICATION = "isHideSeekbarNotification"
 
-        isHideSeekbarNotification
-
         /** For custom action from outside the app */
         const val DW_NFC_BETTER_PLAYER_CUSTOM_ACTION =
             "better_player.nfc_ch_app/custom_action"
@@ -882,8 +902,10 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         }
 
         // Will be observed to show notification.
-        private var _notificationParameter: MutableLiveData<NotificationParameter?> = MutableLiveData()
+        private var _notificationParameter: MutableLiveData<NotificationParameter?> =
+            MutableLiveData()
         val notificationParameter: LiveData<NotificationParameter?> get() = _notificationParameter
+
         // Will be observed to update action in notification.
         private var _notificationActions: MutableLiveData<List<NotificationCompat.Action>?> =
             MutableLiveData()
