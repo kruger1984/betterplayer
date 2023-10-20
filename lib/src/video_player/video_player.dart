@@ -299,6 +299,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     String? notificationChannelName,
     Duration? overriddenDuration,
     String? activityName,
+    bool? isHideSeekbarNotification,
   }) {
     return _setDataSource(
       DataSource(
@@ -313,6 +314,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         notificationChannelName: notificationChannelName,
         overriddenDuration: overriddenDuration,
         activityName: activityName,
+        isHideSeekbarNotification: isHideSeekbarNotification,
       ),
     );
   }
@@ -346,31 +348,32 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     String? activityName,
     String? clearKey,
     String? videoExtension,
+    bool? isHideSeekbarNotification,
   }) {
     return _setDataSource(
       DataSource(
-        sourceType: DataSourceType.network,
-        uri: dataSource,
-        isLiveStream: isLiveStream,
-        formatHint: formatHint,
-        headers: headers,
-        useCache: useCache,
-        maxCacheSize: maxCacheSize,
-        maxCacheFileSize: maxCacheFileSize,
-        cacheKey: cacheKey,
-        showNotification: showNotification,
-        title: title,
-        author: author,
-        imageUrl: imageUrl,
-        notificationChannelName: notificationChannelName,
-        overriddenDuration: overriddenDuration,
-        licenseUrl: licenseUrl,
-        certificateUrl: certificateUrl,
-        drmHeaders: drmHeaders,
-        activityName: activityName,
-        clearKey: clearKey,
-        videoExtension: videoExtension,
-      ),
+          sourceType: DataSourceType.network,
+          uri: dataSource,
+          isLiveStream: isLiveStream,
+          formatHint: formatHint,
+          headers: headers,
+          useCache: useCache,
+          maxCacheSize: maxCacheSize,
+          maxCacheFileSize: maxCacheFileSize,
+          cacheKey: cacheKey,
+          showNotification: showNotification,
+          title: title,
+          author: author,
+          imageUrl: imageUrl,
+          notificationChannelName: notificationChannelName,
+          overriddenDuration: overriddenDuration,
+          licenseUrl: licenseUrl,
+          certificateUrl: certificateUrl,
+          drmHeaders: drmHeaders,
+          activityName: activityName,
+          clearKey: clearKey,
+          videoExtension: videoExtension,
+          isHideSeekbarNotification: isHideSeekbarNotification),
     );
   }
 
@@ -387,7 +390,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       String? notificationChannelName,
       Duration? overriddenDuration,
       String? activityName,
-      String? clearKey}) {
+      String? clearKey,
+      bool? isHideSeekbarNotification}) {
     return _setDataSource(
       DataSource(
           sourceType: DataSourceType.file,
@@ -400,7 +404,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           notificationChannelName: notificationChannelName,
           overriddenDuration: overriddenDuration,
           activityName: activityName,
-          clearKey: clearKey),
+          clearKey: clearKey,
+          isHideSeekbarNotification: isHideSeekbarNotification),
     );
   }
 

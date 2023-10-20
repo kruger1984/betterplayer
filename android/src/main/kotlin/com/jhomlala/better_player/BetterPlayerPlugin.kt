@@ -591,6 +591,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             val title = getParameter(dataSource, TITLE_PARAMETER, "")
             val author = getParameter(dataSource, AUTHOR_PARAMETER, "")
             val imageUrl = getParameter(dataSource, IMAGE_URL_PARAMETER, "")
+            val isHideSeekbarNotification = getParameter(dataSource, IS_HIDE_SEEKBAR_NOTIFICATION, true)
             val mediaSession =
                 betterPlayer.setupMediaSession(
                     context,
@@ -599,19 +600,14 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                     bitmap = iconBitmap
                 )
             mediaSession?.let { session ->
+                val metaData = MediaMetadataCompat.Builder()
                 if (DetectingDeviceUtilities.isSamsungDeviceWithAndroidR) {
                     // VOD
                     // Samsung devices with android 11 
                     // https://dw-ml-nfc.atlassian.net/browse/DAF-4294
-                    val metaData = MediaMetadataCompat.Builder()
+                    metaData
                         .putString(MediaMetadata.METADATA_KEY_ARTIST, author)
                         .putString(MediaMetadata.METADATA_KEY_TITLE, title)
-
-                    betterPlayer.isCurrentMediaItemLive?.let {
-                        if (!it) {
-                            // only set duration VOD
-                            metaData.putLong(MediaMetadata.METADATA_KEY_DURATION, betterPlayer.getDuration())
-                        }
                     }
 
                     iconBitmap?.let {
@@ -621,8 +617,11 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                             Picasso.get().load(imageUrl).into(imageDownloadHandler)
                         }
                     }
-                    session.setMetadata(metaData.build())
-                }
+
+                val duration = isHideSeekbarNotification ? -1L : betterPlayer.getDuration()
+                metaData.putLong(MediaMetadata.METADATA_KEY_DURATION, duration)
+                session.setMetadata(metaData.build())
+
                 _notificationParameter.value = NotificationParameter(
                     title = title,
                     author = author,
@@ -868,6 +867,9 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         private const val PRE_CACHE_METHOD = "preCache"
         private const val STOP_PRE_CACHE_METHOD = "stopPreCache"
         private val PIP_ASPECT_RATIO = Rational(16, 9)
+        const val IS_HIDE_SEEKBAR_NOTIFICATION = "isHideSeekbarNotification"
+
+        isHideSeekbarNotification
 
         /** For custom action from outside the app */
         const val DW_NFC_BETTER_PLAYER_CUSTOM_ACTION =
