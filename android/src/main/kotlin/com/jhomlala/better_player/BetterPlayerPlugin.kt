@@ -619,7 +619,8 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                     context,
                     title = title,
                     author = author,
-                    bitmap = iconBitmap
+                    bitmap = iconBitmap,
+                    isHideSeekbar = isHideSeekbarNotification,
                 )
             mediaSession?.let { session ->
                 val metaData = MediaMetadataCompat.Builder()
@@ -630,13 +631,12 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                     metaData
                         .putString(MediaMetadata.METADATA_KEY_ARTIST, author)
                         .putString(MediaMetadata.METADATA_KEY_TITLE, title)
-                }
-
-                iconBitmap?.let {
-                    metaData.putBitmap(MediaMetadata.METADATA_KEY_ART, it)
-                } ?: run {
-                    if (imageUrl.isNotBlank()) {
-                        Picasso.get().load(imageUrl).into(imageDownloadHandler)
+                    iconBitmap?.let {
+                        metaData.putBitmap(MediaMetadata.METADATA_KEY_ART, it)
+                    } ?: run {
+                        if (imageUrl.isNotBlank()) {
+                            Picasso.get().load(imageUrl).into(imageDownloadHandler)
+                        }
                     }
                 }
 

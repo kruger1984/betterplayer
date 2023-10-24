@@ -637,6 +637,7 @@ internal class BetterPlayer(
         title: String = "",
         author: String = "",
         bitmap: Bitmap? = null,
+        isHideSeekbar: Boolean = true,
     ): MediaSessionCompat? {
         mediaSession?.release()
         context?.let {
@@ -662,8 +663,7 @@ internal class BetterPlayer(
                     // LIVE
                     // Samsung devices with android 11 
                     // https://dw-ml-nfc.atlassian.net/browse/DAF-4294
-                    val isCurrentMediaItemLive = exoPlayer?.isCurrentMediaItemLive
-                    if (isCurrentMediaItemLive != null && isCurrentMediaItemLive) {
+                    if (isHideSeekbar) {
                         setQueueNavigator(object : TimelineQueueNavigator(mediaSession) {
                             override fun getMediaDescription(
                                 player: Player, windowIndex: Int
