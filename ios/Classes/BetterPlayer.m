@@ -787,7 +787,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 - (void)pictureInPictureControllerWillStopPictureInPicture:(AVPictureInPictureController *)pictureInPictureController  API_AVAILABLE(ios(9.0)){
     [self setIsPipMode:false];
     [self hideBlackCoverView];
-    [self hideLimitedPlanCoverViewInPIP];
+    [self hideLimitedPlanCoverAfterPipCompletelyGone];
     
     bool wasPlaying = _isPlaying;
     if (_eventSink != nil) {
@@ -922,6 +922,29 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     if (_limitedPlanCoverView) {
         [_limitedPlanCoverView removeFromSuperview];
     }
+}
+
+/// Hide LimitedPlanCoverView after the PIP is completely gone.
+///
+/// - if _isPipMode == true and isPictureInPictureActive is whatever (still in PIP mode)
+///     - All the check is false, finish this function without any actions.
+///     - The showLimitedPlanCoverView logics already handled when re-entering PIP and while in PIP mode.
+/// - if _isPipMode == false and isPictureInPictureActive == true (while exiting PIP, and not completed yet)
+///     - Call the loop and re-checking after 0.1 seconds.
+/// - if _isPipMode == false and isPictureInPictureActive == false (the PIP is completely gone)
+///     - Hide LimitedPlanCoverView.
+- (void)hideLimitedPlanCoverAfterPipCompletelyGone {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        if (_isPipMode) {
+            return;
+        }
+        if ([_pipController isPictureInPictureActive]) {
+            [self hideLimitedPlanCoverAfterPipCompletelyGone];
+            return;
+        }
+        
+        [self hideLimitedPlanCoverViewInPIP];
+    });
 }
 
 - (void) setIsPipMode:(bool)isPipMode {
