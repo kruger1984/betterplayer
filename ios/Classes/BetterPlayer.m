@@ -935,14 +935,15 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 ///     - Hide LimitedPlanCoverView.
 - (void)hideLimitedPlanCoverAfterPipCompletelyGone {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        if (_isPipMode == false && [_pipController isPictureInPictureActive]) {
+        if (_isPipMode) {
+            return;
+        }
+        if ([_pipController isPictureInPictureActive]) {
             [self hideLimitedPlanCoverAfterPipCompletelyGone];
             return;
         }
         
-        if (_isPipMode == false) {
-            [self hideLimitedPlanCoverViewInPIP];
-        }
+        [self hideLimitedPlanCoverViewInPIP];
     });
 }
 
