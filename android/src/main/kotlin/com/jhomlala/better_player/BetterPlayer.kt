@@ -637,7 +637,7 @@ internal class BetterPlayer(
         title: String = "",
         author: String = "",
         bitmap: Bitmap? = null,
-        isHideSeekbar: Boolean = true,
+        shouldDisableSeekbarNotification: Boolean = true,
     ): MediaSessionCompat? {
         mediaSession?.release()
         context?.let {
@@ -663,7 +663,7 @@ internal class BetterPlayer(
                     // LIVE
                     // Samsung devices with android 11 
                     // https://dw-ml-nfc.atlassian.net/browse/DAF-4294
-                    if (isHideSeekbar) {
+                    if (shouldDisableSeekbarNotification) {
                         setQueueNavigator(object : TimelineQueueNavigator(mediaSession) {
                             override fun getMediaDescription(
                                 player: Player, windowIndex: Int

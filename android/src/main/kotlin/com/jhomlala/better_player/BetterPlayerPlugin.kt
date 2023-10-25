@@ -612,15 +612,15 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             val title = getParameter(dataSource, TITLE_PARAMETER, "")
             val author = getParameter(dataSource, AUTHOR_PARAMETER, "")
             val imageUrl = getParameter(dataSource, IMAGE_URL_PARAMETER, "")
-            val isHideSeekbarNotification =
-                getParameter(dataSource, IS_HIDE_SEEKBAR_NOTIFICATION, true)
+            val shouldDisableSeekbarNotification =
+                getParameter(dataSource, SHOULD_DISABLE_SEEK_BAR_NOTIFICATION, true)
             val mediaSession =
                 betterPlayer.setupMediaSession(
                     context,
                     title = title,
                     author = author,
                     bitmap = iconBitmap,
-                    isHideSeekbar = isHideSeekbarNotification,
+                    shouldDisableSeekbarNotification = shouldDisableSeekbarNotification,
                 )
             mediaSession?.let { session ->
                 val metaData = MediaMetadataCompat.Builder()
@@ -640,7 +640,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                     }
                 }
 
-                val duration = if (isHideSeekbarNotification) -1L else betterPlayer.getDuration()
+                val duration = if (shouldDisableSeekbarNotification) -1L else betterPlayer.getDuration()
                 metaData.putLong(MediaMetadata.METADATA_KEY_DURATION, duration)
                 session.setMetadata(metaData.build())
 
@@ -889,7 +889,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         private const val PRE_CACHE_METHOD = "preCache"
         private const val STOP_PRE_CACHE_METHOD = "stopPreCache"
         private val PIP_ASPECT_RATIO = Rational(16, 9)
-        const val IS_HIDE_SEEKBAR_NOTIFICATION = "isHideSeekbarNotification"
+        const val SHOULD_DISABLE_SEEK_BAR_NOTIFICATION = "shouldDisableSeekbarNotification"
 
         /** For custom action from outside the app */
         const val DW_NFC_BETTER_PLAYER_CUSTOM_ACTION =

@@ -299,7 +299,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     String? notificationChannelName,
     Duration? overriddenDuration,
     String? activityName,
-    bool? isHideSeekbarNotification,
+    bool? shouldDisableSeekbarNotification,
   }) {
     return _setDataSource(
       DataSource(
@@ -314,7 +314,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         notificationChannelName: notificationChannelName,
         overriddenDuration: overriddenDuration,
         activityName: activityName,
-        isHideSeekbarNotification: isHideSeekbarNotification,
+        shouldDisableSeekbarNotification: shouldDisableSeekbarNotification,
       ),
     );
   }
@@ -348,7 +348,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     String? activityName,
     String? clearKey,
     String? videoExtension,
-    bool? isHideSeekbarNotification,
+    bool? shouldDisableSeekbarNotification,
   }) {
     return _setDataSource(
       DataSource(
@@ -373,7 +373,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         activityName: activityName,
         clearKey: clearKey,
         videoExtension: videoExtension,
-        isHideSeekbarNotification: isHideSeekbarNotification,
+        shouldDisableSeekbarNotification: shouldDisableSeekbarNotification,
       ),
     );
   }
@@ -392,7 +392,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       Duration? overriddenDuration,
       String? activityName,
       String? clearKey,
-      bool? isHideSeekbarNotification}) {
+      bool? shouldDisableSeekbarNotification}) {
     return _setDataSource(
       DataSource(
           sourceType: DataSourceType.file,
@@ -406,7 +406,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           overriddenDuration: overriddenDuration,
           activityName: activityName,
           clearKey: clearKey,
-          isHideSeekbarNotification: isHideSeekbarNotification),
+          shouldDisableSeekbarNotification: shouldDisableSeekbarNotification),
     );
   }
 

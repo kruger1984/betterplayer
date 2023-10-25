@@ -78,7 +78,7 @@ class BetterPlayerDataSource {
 
   ///Flag determine hide seekbar of notification. Currently only supported in Android platform.
   ///Fix bug ticket: https://dw-ml-nfc.atlassian.net/browse/DAF-4473
-  final bool? isHideSeekbarNotification;
+  final bool? shouldDisableSeekbarNotification;
 
   BetterPlayerDataSource(
     this.type,
@@ -103,7 +103,7 @@ class BetterPlayerDataSource {
     this.drmConfiguration,
     this.placeholder,
     this.bufferingConfiguration = const BetterPlayerBufferingConfiguration(),
-    this.isHideSeekbarNotification,
+    this.shouldDisableSeekbarNotification,
   }) : assert(
             (type == BetterPlayerDataSourceType.network ||
                     type == BetterPlayerDataSourceType.file) ||
@@ -131,7 +131,7 @@ class BetterPlayerDataSource {
     Widget? placeholder,
     BetterPlayerBufferingConfiguration bufferingConfiguration =
         const BetterPlayerBufferingConfiguration(),
-    bool? isHideSeekbarNotification,
+    bool? shouldDisableSeekbarNotification,
   }) {
     return BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
@@ -150,7 +150,7 @@ class BetterPlayerDataSource {
       drmConfiguration: drmConfiguration,
       placeholder: placeholder,
       bufferingConfiguration: bufferingConfiguration,
-      isHideSeekbarNotification: isHideSeekbarNotification,
+      shouldDisableSeekbarNotification: shouldDisableSeekbarNotification,
     );
   }
 
@@ -167,7 +167,7 @@ class BetterPlayerDataSource {
     BetterPlayerNotificationConfiguration? notificationConfiguration,
     Duration? overriddenDuration,
     Widget? placeholder,
-    bool? isHideSeekbarNotification,
+    bool? shouldDisableSeekbarNotification,
   }) {
     return BetterPlayerDataSource(
       BetterPlayerDataSourceType.file,
@@ -182,7 +182,7 @@ class BetterPlayerDataSource {
           const BetterPlayerNotificationConfiguration(showNotification: false),
       overriddenDuration: overriddenDuration,
       placeholder: placeholder,
-      isHideSeekbarNotification: isHideSeekbarNotification,
+      shouldDisableSeekbarNotification: shouldDisableSeekbarNotification,
     );
   }
 
@@ -200,7 +200,7 @@ class BetterPlayerDataSource {
     BetterPlayerNotificationConfiguration? notificationConfiguration,
     Duration? overriddenDuration,
     Widget? placeholder,
-    bool? isHideSeekbarNotification,
+    bool? shouldDisableSeekbarNotification,
   }) {
     return BetterPlayerDataSource(
       BetterPlayerDataSourceType.memory,
@@ -217,7 +217,7 @@ class BetterPlayerDataSource {
           const BetterPlayerNotificationConfiguration(showNotification: false),
       overriddenDuration: overriddenDuration,
       placeholder: placeholder,
-      isHideSeekbarNotification: isHideSeekbarNotification,
+      shouldDisableSeekbarNotification: shouldDisableSeekbarNotification,
     );
   }
 
@@ -242,7 +242,7 @@ class BetterPlayerDataSource {
     Widget? placeholder,
     BetterPlayerBufferingConfiguration? bufferingConfiguration =
         const BetterPlayerBufferingConfiguration(),
-    bool? isHideSeekbarNotification,
+    bool? shouldDisableSeekbarNotification,
   }) {
     return BetterPlayerDataSource(
       type ?? this.type,
@@ -265,7 +265,7 @@ class BetterPlayerDataSource {
       placeholder: placeholder ?? this.placeholder,
       bufferingConfiguration:
           bufferingConfiguration ?? this.bufferingConfiguration,
-      isHideSeekbarNotification: isHideSeekbarNotification,
+      shouldDisableSeekbarNotification: shouldDisableSeekbarNotification,
     );
   }
 }

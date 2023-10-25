@@ -74,7 +74,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'notificationChannelName': dataSource.notificationChannelName,
           'overriddenDuration': dataSource.overriddenDuration?.inMilliseconds,
           'activityName': dataSource.activityName,
-          'isHideSeekbarNotification': dataSource.isHideSeekbarNotification
+          'shouldDisableSeekbarNotification': dataSource.shouldDisableSeekbarNotification
         };
         break;
       case DataSourceType.network:
@@ -100,7 +100,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'activityName': dataSource.activityName,
           'clearKey': dataSource.clearKey,
           'videoExtension': dataSource.videoExtension,
-          'isHideSeekbarNotification': dataSource.isHideSeekbarNotification
+          'shouldDisableSeekbarNotification': dataSource.shouldDisableSeekbarNotification
         };
         break;
       case DataSourceType.file:
@@ -119,7 +119,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'overriddenDuration': dataSource.overriddenDuration?.inMilliseconds,
           'activityName': dataSource.activityName,
           'clearKey': dataSource.clearKey,
-          'isHideSeekbarNotification': dataSource.isHideSeekbarNotification
+          'isHideSeekbarNotification': dataSource.shouldDisableSeekbarNotification
         };
         break;
     }
