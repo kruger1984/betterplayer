@@ -76,8 +76,8 @@ class BetterPlayerDataSource {
   ///platform.
   final BetterPlayerBufferingConfiguration bufferingConfiguration;
 
-  //flag determine hide seekbar of notification
-  //fix bug ticket: https://dw-ml-nfc.atlassian.net/browse/DAF-4473
+  ///Flag determine hide seekbar of notification. Currently only supported in Android platform.
+  ///Fix bug ticket: https://dw-ml-nfc.atlassian.net/browse/DAF-4473
   final bool? isHideSeekbarNotification;
 
   BetterPlayerDataSource(
