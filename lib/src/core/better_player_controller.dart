@@ -473,8 +473,6 @@ class BetterPlayerController {
               _betterPlayerDataSource?.notificationConfiguration?.activityName,
           clearKey: _betterPlayerDataSource?.drmConfiguration?.clearKey,
           videoExtension: _betterPlayerDataSource!.videoExtension,
-          shouldDisableSeekbarNotification:
-              _betterPlayerDataSource?.shouldDisableSeekbarNotification,
         );
 
         break;
@@ -501,9 +499,7 @@ class BetterPlayerController {
             overriddenDuration: _betterPlayerDataSource!.overriddenDuration,
             activityName: _betterPlayerDataSource
                 ?.notificationConfiguration?.activityName,
-            clearKey: _betterPlayerDataSource?.drmConfiguration?.clearKey,
-            shouldDisableSeekbarNotification:
-                _betterPlayerDataSource?.shouldDisableSeekbarNotification);
+            clearKey: _betterPlayerDataSource?.drmConfiguration?.clearKey);
         break;
       case BetterPlayerDataSourceType.memory:
         final file = await _createFile(_betterPlayerDataSource!.bytes!,
@@ -524,9 +520,7 @@ class BetterPlayerController {
               overriddenDuration: _betterPlayerDataSource!.overriddenDuration,
               activityName: _betterPlayerDataSource
                   ?.notificationConfiguration?.activityName,
-              clearKey: _betterPlayerDataSource?.drmConfiguration?.clearKey,
-              shouldDisableSeekbarNotification:
-                  _betterPlayerDataSource?.shouldDisableSeekbarNotification);
+              clearKey: _betterPlayerDataSource?.drmConfiguration?.clearKey);
           _tempFiles.add(file);
         } else {
           throw ArgumentError("Couldn't create file from memory.");

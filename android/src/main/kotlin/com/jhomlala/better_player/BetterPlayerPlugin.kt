@@ -612,7 +612,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             val title = getParameter(dataSource, TITLE_PARAMETER, "")
             val author = getParameter(dataSource, AUTHOR_PARAMETER, "")
             val imageUrl = getParameter(dataSource, IMAGE_URL_PARAMETER, "")
-            val shouldDisableSeekbarNotification =
+            val isLiveOrMakingArchive =
                 getParameter(dataSource, IS_LIVE_STREAM, true)
             val mediaSession =
                 betterPlayer.setupMediaSession(
@@ -620,7 +620,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                     title = title,
                     author = author,
                     bitmap = iconBitmap,
-                    shouldDisableSeekbarNotification = shouldDisableSeekbarNotification,
+                    isLiveOrMakingArchive = isLiveOrMakingArchive,
                 )
             mediaSession?.let { session ->
                 val metaData = MediaMetadataCompat.Builder()
@@ -641,7 +641,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                 }
 
                 val duration =
-                    if (shouldDisableSeekbarNotification) -1L else betterPlayer.getDuration()
+                    if (isLiveOrMakingArchive) -1L else betterPlayer.getDuration()
                 metaData.putLong(MediaMetadata.METADATA_KEY_DURATION, duration)
                 session.setMetadata(metaData.build())
 
@@ -908,7 +908,8 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         val notificationParameter: LiveData<NotificationParameter?> get() = _notificationParameter
 
         // Will be observed to update action in notification.
-        private var _notificationActions: MutableLiveData<List<NotificationCompat.Action>?> = MutableLiveData()
+        private var _notificationActions: MutableLiveData<List<NotificationCompat.Action>?> =
+            MutableLiveData()
         val notificationActions: LiveData<List<NotificationCompat.Action>?> get() = _notificationActions
     }
 }

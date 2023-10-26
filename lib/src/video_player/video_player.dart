@@ -299,7 +299,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     String? notificationChannelName,
     Duration? overriddenDuration,
     String? activityName,
-    bool? shouldDisableSeekbarNotification,
   }) {
     return _setDataSource(
       DataSource(
@@ -314,7 +313,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         notificationChannelName: notificationChannelName,
         overriddenDuration: overriddenDuration,
         activityName: activityName,
-        shouldDisableSeekbarNotification: shouldDisableSeekbarNotification,
       ),
     );
   }
@@ -348,7 +346,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     String? activityName,
     String? clearKey,
     String? videoExtension,
-    bool? shouldDisableSeekbarNotification,
   }) {
     return _setDataSource(
       DataSource(
@@ -373,7 +370,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         activityName: activityName,
         clearKey: clearKey,
         videoExtension: videoExtension,
-        shouldDisableSeekbarNotification: shouldDisableSeekbarNotification,
       ),
     );
   }
@@ -391,8 +387,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       String? notificationChannelName,
       Duration? overriddenDuration,
       String? activityName,
-      String? clearKey,
-      bool? shouldDisableSeekbarNotification}) {
+      String? clearKey}) {
     return _setDataSource(
       DataSource(
           sourceType: DataSourceType.file,
@@ -405,8 +400,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           notificationChannelName: notificationChannelName,
           overriddenDuration: overriddenDuration,
           activityName: activityName,
-          clearKey: clearKey,
-          shouldDisableSeekbarNotification: shouldDisableSeekbarNotification),
+          clearKey: clearKey),
     );
   }
 

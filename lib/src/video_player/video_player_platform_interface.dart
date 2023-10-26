@@ -252,7 +252,6 @@ class DataSource {
     this.activityName,
     this.clearKey,
     this.videoExtension,
-    this.shouldDisableSeekbarNotification,
   }) : assert(uri == null || asset == null);
 
   /// Describes the type of data source this [VideoPlayerController]
@@ -332,8 +331,6 @@ class DataSource {
   final String? clearKey;
 
   final String? videoExtension;
-
-  final bool? shouldDisableSeekbarNotification;
 
   /// Key to compare DataSource
   String get key {
