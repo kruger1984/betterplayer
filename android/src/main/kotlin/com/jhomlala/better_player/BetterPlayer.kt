@@ -660,8 +660,8 @@ internal class BetterPlayer(
             mediaSessionConnector?.apply {
                 setPlayer(exoPlayer)
                 if (DetectingDeviceUtilities.isSamsungDeviceWithAndroidR) {
-                    // LIVE
-                    // Samsung devices with android 11 
+                    // LIVE or Live Finished And Making Archive
+                    // Samsung devices with android 11
                     // https://dw-ml-nfc.atlassian.net/browse/DAF-4294
                     if (shouldDisableSeekbarNotification) {
                         setQueueNavigator(object : TimelineQueueNavigator(mediaSession) {
