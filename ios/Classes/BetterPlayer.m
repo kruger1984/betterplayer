@@ -839,6 +839,17 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
 - (void)setIsPremiumBannerDisplay:(BOOL) isDisplay {
     _isPremiumBannerDisplay = isDisplay;
+    if (isDisplay) {
+        [self._betterPlayerView addSubview:_blackCoverView];
+        [NSLayoutConstraint activateConstraints:@[
+            [_blackCoverView.topAnchor constraintEqualToAnchor:self._betterPlayerView.topAnchor],
+            [_blackCoverView.bottomAnchor constraintEqualToAnchor:self._betterPlayerView.bottomAnchor],
+            [_blackCoverView.leadingAnchor constraintEqualToAnchor:self._betterPlayerView.leadingAnchor],
+            [_blackCoverView.trailingAnchor constraintEqualToAnchor:self._betterPlayerView.trailingAnchor],
+        ]];
+    } else if (_blackCoverView) {
+        [_blackCoverView removeFromSuperview];
+    }
 }
 
 - (void) setAudioTrack:(NSString*) name index:(int) index{
