@@ -25,6 +25,7 @@ int _seekPosition;
     self = [super init];
     [self initBlackCoverView];
     [self initLimitedPlanCoverView];
+    [self initLimitedBlackCoverView];
     NSAssert(self, @"super init cannot be nil");
     _isInitialized = false;
     _isPlaying = false;
@@ -837,18 +838,35 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     [_pipController setValue:[NSNumber numberWithInt:isDisplay ? 0 : 1] forKey:@"controlsStyle"];
 }
 
+- (void) initLimitedBlackCoverView {
+    _limitedBlackCoverView = NULL;
+    _limitedBlackCoverView = [[UIView alloc] init];
+    _limitedBlackCoverView.translatesAutoresizingMaskIntoConstraints = false;
+    _limitedBlackCoverView.backgroundColor = [UIColor blackColor];
+}
+
+- (void) showLimitedBlackCoverView {
+    [self._betterPlayerView addSubview:_limitedBlackCoverView];
+        [NSLayoutConstraint activateConstraints:@[
+            [_limitedBlackCoverView.topAnchor constraintEqualToAnchor:self._betterPlayerView.topAnchor],
+            [_limitedBlackCoverView.bottomAnchor constraintEqualToAnchor:self._betterPlayerView.bottomAnchor],
+            [_limitedBlackCoverView.leadingAnchor constraintEqualToAnchor:self._betterPlayerView.leadingAnchor],
+            [_limitedBlackCoverView.trailingAnchor constraintEqualToAnchor:self._betterPlayerView.trailingAnchor],
+        ]];
+}
+
+- (void) hideLimitedBlackCoverView {
+    if (_limitedBlackCoverView) {
+        [_limitedBlackCoverView removeFromSuperview];
+    }
+}
+
 - (void)setIsPremiumBannerDisplay:(BOOL) isDisplay {
     _isPremiumBannerDisplay = isDisplay;
     if (isDisplay) {
-        [self._betterPlayerView addSubview:_blackCoverView];
-        [NSLayoutConstraint activateConstraints:@[
-            [_blackCoverView.topAnchor constraintEqualToAnchor:self._betterPlayerView.topAnchor],
-            [_blackCoverView.bottomAnchor constraintEqualToAnchor:self._betterPlayerView.bottomAnchor],
-            [_blackCoverView.leadingAnchor constraintEqualToAnchor:self._betterPlayerView.leadingAnchor],
-            [_blackCoverView.trailingAnchor constraintEqualToAnchor:self._betterPlayerView.trailingAnchor],
-        ]];
-    } else if (_blackCoverView) {
-        [_blackCoverView removeFromSuperview];
+        [self showLimitedBlackCoverView];
+    } else {
+        [self hideLimitedBlackCoverView];
     }
 }
 
