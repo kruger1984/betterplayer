@@ -40,6 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic) AVPlayerTimeControlStatus lastAvPlayerTimeControlStatus;
 @property(nonatomic) UIView* blackCoverView;
 @property(nonatomic) UIImageView* limitedPlanCoverView;
+@property(nonatomic) UIView* limitedBlackCoverView;
 @property(nonatomic) bool isPremiumBannerDisplay;
 @property(nonatomic) bool isPipMode;
 @property(nonatomic) id timeObserverId;
