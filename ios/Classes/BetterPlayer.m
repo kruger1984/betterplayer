@@ -25,6 +25,7 @@ int _seekPosition;
     self = [super init];
     [self initBlackCoverView];
     [self initLimitedPlanCoverView];
+    [self initLimitedBlackCoverView];
     NSAssert(self, @"super init cannot be nil");
     _isInitialized = false;
     _isPlaying = false;
@@ -835,6 +836,30 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
 - (void)setIsDisplayPipButtons:(BOOL) isDisplay {
     [_pipController setValue:[NSNumber numberWithInt:isDisplay ? 0 : 1] forKey:@"controlsStyle"];
+}
+
+- (void) initLimitedBlackCoverView {
+    _limitedBlackCoverView = NULL;
+    _limitedBlackCoverView = [[UIView alloc] init];
+    _limitedBlackCoverView.translatesAutoresizingMaskIntoConstraints = false;
+    _limitedBlackCoverView.backgroundColor = [UIColor blackColor];
+}
+
+- (void) showLimitedBlackCoverView {
+    if (self._betterPlayerView.subviews.contains(_limitedBlackCoverView)) return;
+    [self._betterPlayerView addSubview:_limitedBlackCoverView];
+        [NSLayoutConstraint activateConstraints:@[
+            [_limitedBlackCoverView.topAnchor constraintEqualToAnchor:self._betterPlayerView.topAnchor],
+            [_limitedBlackCoverView.bottomAnchor constraintEqualToAnchor:self._betterPlayerView.bottomAnchor],
+            [_limitedBlackCoverView.leadingAnchor constraintEqualToAnchor:self._betterPlayerView.leadingAnchor],
+            [_limitedBlackCoverView.trailingAnchor constraintEqualToAnchor:self._betterPlayerView.trailingAnchor],
+        ]];
+}
+
+- (void) hideLimitedBlackCoverView {
+    if (_limitedBlackCoverView) {
+        [_limitedBlackCoverView removeFromSuperview];
+    }
 }
 
 - (void)setIsPremiumBannerDisplay:(BOOL) isDisplay {
