@@ -846,6 +846,9 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void) showLimitedBlackCoverView {
+    if (self._betterPlayerView == nil) {
+        return;
+    }
     [self._betterPlayerView addSubview:_limitedBlackCoverView];
         [NSLayoutConstraint activateConstraints:@[
             [_limitedBlackCoverView.topAnchor constraintEqualToAnchor:self._betterPlayerView.topAnchor],
