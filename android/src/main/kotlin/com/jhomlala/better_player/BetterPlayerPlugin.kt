@@ -477,10 +477,14 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                 0L,
                 overriddenDuration.toLong(),
                 null,
-                null, null, null
+                null,
+                null,
+                null,
+                false,
             )
         } else {
             val useCache = getParameter(dataSource, USE_CACHE_PARAMETER, false)
+            val isLiveStream = getParameter(dataSource, IS_LIVE_STREAM, false)
             val maxCacheSizeNumber: Number = getParameter(dataSource, MAX_CACHE_SIZE_PARAMETER, 0)
             val maxCacheFileSizeNumber: Number =
                 getParameter(dataSource, MAX_CACHE_FILE_SIZE_PARAMETER, 0)
@@ -507,7 +511,8 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                 licenseUrl,
                 drmHeaders,
                 cacheKey,
-                clearKey
+                clearKey,
+                isLiveStream
             )
         }
     }

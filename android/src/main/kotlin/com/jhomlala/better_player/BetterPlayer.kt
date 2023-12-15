@@ -119,7 +119,8 @@ internal class BetterPlayer(
         licenseUrl: String?,
         drmHeaders: Map<String, String>?,
         cacheKey: String?,
-        clearKey: String?
+        clearKey: String?,
+        isLiveStream: Boolean
     ) {
         this.key = key
         isInitialized = false
@@ -188,6 +189,14 @@ internal class BetterPlayer(
         if (overriddenDuration != 0L) {
             val clippingMediaSource = ClippingMediaSource(mediaSource, 0, overriddenDuration * 1000)
             exoPlayer?.setMediaSource(clippingMediaSource)
+        } else if (isLiveStream) {
+            // DVR only (isLiveStream == true && overriddenDuration == 0L(null相当))
+            //
+            // In cases where the network of the livestream source is unstable,
+            // it is not possible to start the DVR from the default position which is near the LIVE point
+            // because that position belongs to the unwatchable part.(https://dw-ml-nfc.atlassian.net/browse/DAF-4687?focusedCommentId=125687)
+            // Instead, starting the DVR from the 10ms position will always work fine.
+            exoPlayer?.setMediaSource(mediaSource, 10)
         } else {
             exoPlayer?.setMediaSource(mediaSource)
         }
