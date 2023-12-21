@@ -600,16 +600,15 @@ bool _isCommandCenterButtonsEnabled = true;
 
             if (isDisplayObject != [NSNull null]) {
                 isDisplay = [[argsMap objectForKey:@"isDisplay"] boolValue];
-                
-                if (player.isPremiumBannerDisplay != isDisplay) {
-                    if (isDisplay) {
-                        [player showLimitedPlanCoverViewInPIP];
-                        [player showLimitedBlackCoverView];
-                    } else {
-                        [player hideLimitedPlanCoverViewInPIP];
-                        [player hideLimitedBlackCoverView];
-                    }
+
+                if (isDisplay) {
+                    [player showLimitedPlanCoverViewInPIP];
+                    [player showLimitedBlackCoverView];
+                } else {
+                    [player hideLimitedPlanCoverViewInPIP];
+                    [player hideLimitedBlackCoverView];
                 }
+
                 [player setIsPremiumBannerDisplay:isDisplay];
             }
         } else {
