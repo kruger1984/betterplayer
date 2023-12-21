@@ -846,16 +846,18 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void) showLimitedBlackCoverView {
-    if (self._betterPlayerView == nil) {
+    if (self._betterPlayerView == nil || _limitedBlackCoverView.superview != nil) {
         return;
     }
+
     [self._betterPlayerView addSubview:_limitedBlackCoverView];
-        [NSLayoutConstraint activateConstraints:@[
-            [_limitedBlackCoverView.topAnchor constraintEqualToAnchor:self._betterPlayerView.topAnchor],
-            [_limitedBlackCoverView.bottomAnchor constraintEqualToAnchor:self._betterPlayerView.bottomAnchor],
-            [_limitedBlackCoverView.leadingAnchor constraintEqualToAnchor:self._betterPlayerView.leadingAnchor],
-            [_limitedBlackCoverView.trailingAnchor constraintEqualToAnchor:self._betterPlayerView.trailingAnchor],
-        ]];
+
+    [NSLayoutConstraint activateConstraints:@[
+        [_limitedBlackCoverView.topAnchor constraintEqualToAnchor:self._betterPlayerView.topAnchor],
+        [_limitedBlackCoverView.bottomAnchor constraintEqualToAnchor:self._betterPlayerView.bottomAnchor],
+        [_limitedBlackCoverView.leadingAnchor constraintEqualToAnchor:self._betterPlayerView.leadingAnchor],
+        [_limitedBlackCoverView.trailingAnchor constraintEqualToAnchor:self._betterPlayerView.trailingAnchor],
+    ]];
 }
 
 - (void) hideLimitedBlackCoverView {
@@ -934,7 +936,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
 - (void) showLimitedPlanCoverViewInPIP {
     UIWindow *window = [UIApplication sharedApplication].windows.firstObject;
-    if (window && _isPipMode) {
+    if (window && _isPipMode && _limitedPlanCoverView.superview == nil) {
         [window addSubview:_limitedPlanCoverView];
         [NSLayoutConstraint activateConstraints:@[
            [_limitedPlanCoverView.topAnchor constraintEqualToAnchor:window.topAnchor],
