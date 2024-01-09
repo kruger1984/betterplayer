@@ -846,11 +846,19 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void) showLimitedBlackCoverView {
-    if (self._betterPlayerView == nil || _limitedBlackCoverView.superview != nil) {
+    if (self._betterPlayerView == nil) {
         return;
     }
 
     [self._betterPlayerView addSubview:_limitedBlackCoverView];
+
+    NSArray *commonConstraints = [self._betterPlayerView.constraints filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(NSLayoutConstraint *constraint, NSDictionary *bindings) {
+        return [constraint.secondItem isEqual:_limitedBlackCoverView] || [constraint.firstItem isEqual:_limitedBlackCoverView];
+    }]];
+
+    if (commonConstraints.count > 0) {
+        return;
+    }
 
     [NSLayoutConstraint activateConstraints:@[
         [_limitedBlackCoverView.topAnchor constraintEqualToAnchor:self._betterPlayerView.topAnchor],
