@@ -944,8 +944,17 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
 - (void) showLimitedPlanCoverViewInPIP {
     UIWindow *window = [UIApplication sharedApplication].windows.firstObject;
-    if (window && _isPipMode && _limitedPlanCoverView.superview == nil) {
+    if (window && _isPipMode) {
         [window addSubview:_limitedPlanCoverView];
+
+        NSArray *commonConstraints = [window.constraints filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(NSLayoutConstraint *constraint, NSDictionary *bindings) {
+            return [constraint.secondItem isEqual:_limitedPlanCoverView] || [constraint.firstItem isEqual:_limitedPlanCoverView];
+        }]];
+
+        if (commonConstraints.count > 0) {
+            return;
+        }
+
         [NSLayoutConstraint activateConstraints:@[
            [_limitedPlanCoverView.topAnchor constraintEqualToAnchor:window.topAnchor],
            [_limitedPlanCoverView.bottomAnchor constraintEqualToAnchor:window.bottomAnchor],
