@@ -852,11 +852,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
     [self._betterPlayerView addSubview:_limitedBlackCoverView];
 
-    NSArray *commonConstraints = [self._betterPlayerView.constraints filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(NSLayoutConstraint *constraint, NSDictionary *bindings) {
-        return [constraint.secondItem isEqual:_limitedBlackCoverView] || [constraint.firstItem isEqual:_limitedBlackCoverView];
-    }]];
-
-    if (commonConstraints.count > 0) {
+    if ([self hasCommonConstraintsBetweenTwoViews:self._betterPlayerView andView2:_limitedBlackCoverView]) {
         return;
     }
 
@@ -866,6 +862,14 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         [_limitedBlackCoverView.leadingAnchor constraintEqualToAnchor:self._betterPlayerView.leadingAnchor],
         [_limitedBlackCoverView.trailingAnchor constraintEqualToAnchor:self._betterPlayerView.trailingAnchor],
     ]];
+}
+
+- (BOOL)hasCommonConstraintsBetweenTwoViews:(UIView *)view1 andView2:(UIView *)view2 {
+    NSArray *commonConstraints = [view1.constraints filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(NSLayoutConstraint *constraint, NSDictionary *bindings) {
+        return [constraint.firstItem isEqual:view2] || [constraint.secondItem isEqual:view2];
+    }]];
+
+    return commonConstraints.count > 0;
 }
 
 - (void) hideLimitedBlackCoverView {
@@ -947,11 +951,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     if (window && _isPipMode) {
         [window addSubview:_limitedPlanCoverView];
 
-        NSArray *commonConstraints = [window.constraints filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(NSLayoutConstraint *constraint, NSDictionary *bindings) {
-            return [constraint.secondItem isEqual:_limitedPlanCoverView] || [constraint.firstItem isEqual:_limitedPlanCoverView];
-        }]];
-
-        if (commonConstraints.count > 0) {
+        if ([self hasCommonConstraintsBetweenTwoViews:window andView2:_limitedPlanCoverView]) {
             return;
         }
 
