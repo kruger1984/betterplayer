@@ -846,11 +846,15 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void) showLimitedBlackCoverView {
-    if (self._betterPlayerView == nil || _limitedBlackCoverView.superview != nil) {
+    if (self._betterPlayerView == nil) {
         return;
     }
 
     [self._betterPlayerView addSubview:_limitedBlackCoverView];
+
+    if ([self hasCommonConstraintsBetweenTwoViews:self._betterPlayerView andView2:_limitedBlackCoverView]) {
+        return;
+    }
 
     [NSLayoutConstraint activateConstraints:@[
         [_limitedBlackCoverView.topAnchor constraintEqualToAnchor:self._betterPlayerView.topAnchor],
@@ -858,6 +862,14 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         [_limitedBlackCoverView.leadingAnchor constraintEqualToAnchor:self._betterPlayerView.leadingAnchor],
         [_limitedBlackCoverView.trailingAnchor constraintEqualToAnchor:self._betterPlayerView.trailingAnchor],
     ]];
+}
+
+- (BOOL)hasCommonConstraintsBetweenTwoViews:(UIView *)view1 andView2:(UIView *)view2 {
+    NSArray *commonConstraints = [view1.constraints filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(NSLayoutConstraint *constraint, NSDictionary *bindings) {
+        return [constraint.firstItem isEqual:view2] || [constraint.secondItem isEqual:view2];
+    }]];
+
+    return commonConstraints.count > 0;
 }
 
 - (void) hideLimitedBlackCoverView {
@@ -936,8 +948,13 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
 - (void) showLimitedPlanCoverViewInPIP {
     UIWindow *window = [UIApplication sharedApplication].windows.firstObject;
-    if (window && _isPipMode && _limitedPlanCoverView.superview == nil) {
+    if (window && _isPipMode) {
         [window addSubview:_limitedPlanCoverView];
+
+        if ([self hasCommonConstraintsBetweenTwoViews:window andView2:_limitedPlanCoverView]) {
+            return;
+        }
+
         [NSLayoutConstraint activateConstraints:@[
            [_limitedPlanCoverView.topAnchor constraintEqualToAnchor:window.topAnchor],
            [_limitedPlanCoverView.bottomAnchor constraintEqualToAnchor:window.bottomAnchor],
