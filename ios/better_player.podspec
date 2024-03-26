@@ -22,5 +22,6 @@ A new flutter plugin project.
   
   s.platform = :ios, '11.0'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'VALID_ARCHS[sdk=iphonesimulator*]' => 'x86_64' }
+  s.resource_bundles = {'better_player_privacy' => ['Resources/PrivacyInfo.xcprivacy']}
 end
 
