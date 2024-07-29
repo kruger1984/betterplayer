@@ -648,6 +648,7 @@ internal class BetterPlayer(
         bitmap: Bitmap? = null,
         isLiveOrMakingArchive: Boolean = true,
     ): MediaSessionCompat? {
+        deactivateMediaSession()
         mediaSession?.release()
         context?.let {
 
@@ -754,6 +755,7 @@ internal class BetterPlayer(
 
     fun disposeMediaSession() {
         if (mediaSession != null) {
+            deactivateMediaSession()
             mediaSession?.release()
         }
         mediaSession = null
