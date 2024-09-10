@@ -156,7 +156,8 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
     private fun registerBroadcastReceiverForExternalAction() {
         this.activity?.registerReceiver(
             broadcastReceiverForExternalAction,
-            IntentFilter(DW_NFC_BETTER_PLAYER_CUSTOM_ACTION)
+            IntentFilter(DW_NFC_BETTER_PLAYER_CUSTOM_ACTION),
+            RECEIVER_NOT_EXPORTED
         )
     }
 
@@ -241,10 +242,9 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         return PendingIntent.getBroadcast(
             flutterState?.applicationContext,
             customAction.rawValue,
-            Intent(DW_NFC_BETTER_PLAYER_CUSTOM_ACTION).putExtra(
-                EXTRA_ACTION_TYPE,
-                customAction.rawValue
-            ),
+            Intent(DW_NFC_BETTER_PLAYER_CUSTOM_ACTION)
+                .putExtra(EXTRA_ACTION_TYPE, customAction.rawValue)
+                .setPackage(activity!!.packageName),
             PendingIntent.FLAG_IMMUTABLE
         )
     }
@@ -896,6 +896,9 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         private const val STOP_PRE_CACHE_METHOD = "stopPreCache"
         private val PIP_ASPECT_RATIO = Rational(16, 9)
         const val IS_LIVE_STREAM = "isLiveStream"
+
+        // https://developer.android.com/reference/androidx/core/content/ContextCompat#RECEIVER_NOT_EXPORTED()
+        private const val RECEIVER_NOT_EXPORTED = 4
 
         /** For custom action from outside the app */
         const val DW_NFC_BETTER_PLAYER_CUSTOM_ACTION =
