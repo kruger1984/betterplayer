@@ -242,10 +242,9 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         return PendingIntent.getBroadcast(
             flutterState?.applicationContext,
             customAction.rawValue,
-            Intent(DW_NFC_BETTER_PLAYER_CUSTOM_ACTION).putExtra(
-                EXTRA_ACTION_TYPE,
-                customAction.rawValue
-            ).setPackage(activity!!.packageName),
+            Intent(DW_NFC_BETTER_PLAYER_CUSTOM_ACTION)
+                .putExtra(EXTRA_ACTION_TYPE, customAction.rawValue)
+                .setPackage(activity!!.packageName),
             PendingIntent.FLAG_IMMUTABLE
         )
     }
