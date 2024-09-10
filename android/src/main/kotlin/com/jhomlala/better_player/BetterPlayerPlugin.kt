@@ -897,7 +897,9 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         private const val STOP_PRE_CACHE_METHOD = "stopPreCache"
         private val PIP_ASPECT_RATIO = Rational(16, 9)
         const val IS_LIVE_STREAM = "isLiveStream"
-        private val RECEIVER_NOT_EXPORTED = 4
+
+        // https://developer.android.com/reference/androidx/core/content/ContextCompat#RECEIVER_NOT_EXPORTED()
+        private const val RECEIVER_NOT_EXPORTED = 4
 
         /** For custom action from outside the app */
         const val DW_NFC_BETTER_PLAYER_CUSTOM_ACTION =
