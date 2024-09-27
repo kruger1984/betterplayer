@@ -1171,6 +1171,12 @@ class BetterPlayerController {
               "nerdStat": event.nerdStat,
             }));
         break;
+      case VideoEventType.bitrateUpdate:
+        _postEvent(BetterPlayerEvent(BetterPlayerEventType.bitrateUpdate,
+            parameters: <String, dynamic>{
+              "bitrateUpdate": event.bitrateUpdate,
+            }));
+        break;
       case VideoEventType.adStarted:
         _postEvent(BetterPlayerEvent(BetterPlayerEventType.adStarted));
         break;

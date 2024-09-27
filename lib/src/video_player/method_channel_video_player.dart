@@ -483,6 +483,13 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
               key: key,
               nerdStat: values);
 
+        case 'bitrateUpdate':
+          dynamic values = map["values"];
+          return VideoEvent(
+              eventType: VideoEventType.bitrateUpdate,
+              key: key,
+              bitrateUpdate: values);
+
         case 'adStarted':
           return VideoEvent(eventType: VideoEventType.adStarted, key: key);
 

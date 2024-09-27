@@ -28,6 +28,7 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.google.ads.interactivemedia.v3.api.AdEvent
 import com.google.android.exoplayer2.*
+import com.google.android.exoplayer2.analytics.AnalyticsListener
 import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.drm.*
 import com.google.android.exoplayer2.ext.ima.ImaAdsLoader
@@ -72,6 +73,7 @@ import java.nio.charset.StandardCharsets
 import java.util.*
 import kotlin.math.max
 import kotlin.math.min
+import com.google.android.exoplayer2.analytics.AnalyticsListener.EventTime
 
 internal class BetterPlayer(
     context: Context,
@@ -169,6 +171,7 @@ internal class BetterPlayer(
         adsLoader.setPlayer(exoPlayer)
         workManager = WorkManager.getInstance(context)
         workerObserverMap = HashMap()
+        Log.e("bitriiraetye", "yeha samma ayo BETTERPLAYER")
         nerdStatHelper = NerdStatHelper(
             exoPlayer,
             TextView(context),
@@ -730,6 +733,16 @@ internal class BetterPlayer(
             })
         exoPlayer?.setVideoSurface(surface)
         setAudioAttributes(exoPlayer, true)
+        exoPlayer?.addAnalyticsListener(object : AnalyticsListener {
+            override fun onBandwidthEstimate(
+                eventTime: EventTime,
+                totalLoadTimeMs: Int,
+                totalBytesLoaded: Long,
+                bitrateEstimate: Long
+            ) {
+                sendBitrate(bitrateEstimate)
+            }
+        })
         exoPlayer?.addListener(object : Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) {
                 when (playbackState) {
@@ -780,6 +793,13 @@ internal class BetterPlayer(
             eventSink.success(event)
             lastSendBufferedPosition = bufferedPosition
         }
+    }
+
+    fun sendBitrate(bitrate: Long) {
+        val event: MutableMap<String, Any> = HashMap()
+        event["event"] = "bitrateUpdate"
+        event["values"] = bitrate
+        eventSink.success(event)
     }
 
     @Suppress("DEPRECATION")
