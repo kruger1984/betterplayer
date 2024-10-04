@@ -467,6 +467,7 @@ class BetterPlayerController {
           certificateUrl:
               _betterPlayerDataSource?.drmConfiguration?.certificateUrl,
           drmHeaders: _betterPlayerDataSource?.drmConfiguration?.headers,
+          extraParams: _betterPlayerDataSource?.drmConfiguration?.extraParams,
           activityName:
               _betterPlayerDataSource?.notificationConfiguration?.activityName,
           clearKey: _betterPlayerDataSource?.drmConfiguration?.clearKey,
