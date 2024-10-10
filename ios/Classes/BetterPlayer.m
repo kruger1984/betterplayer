@@ -44,6 +44,14 @@ int _seekPosition;
     BetterPlayerView *playerView = [[BetterPlayerView alloc] initWithFrame:CGRectZero];
     playerView.player = _player;
     self._betterPlayerView = playerView;
+
+    if (_pipController) {
+        AVPlayerLayer *playerLayer = playerView.playerLayer;
+        if (playerLayer) {
+            _pipController.contentSource = [[AVPictureInPictureControllerContentSource alloc] initWithPlayerLayer:playerLayer];
+        }
+    }
+
     return playerView;
 }
 
@@ -702,7 +710,8 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
         AVPlayerLayer *playerLayer = self._betterPlayerView.playerLayer;
         if (!_pipController && playerLayer && [AVPictureInPictureController isPictureInPictureSupported]) {
-            _pipController = [[AVPictureInPictureController alloc] initWithPlayerLayer: playerLayer];
+            AVPictureInPictureControllerContentSource *contentSource = [[AVPictureInPictureControllerContentSource alloc] initWithPlayerLayer:playerLayer];
+            _pipController = [[AVPictureInPictureController alloc] initWithContentSource: contentSource];
             if (@available(iOS 14.2, *)) {
                 _pipController.canStartPictureInPictureAutomaticallyFromInline = true;
             }
@@ -745,15 +754,20 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 - (void)willStartPictureInPicture: (bool) willStart
 {
     self._willStartPictureInPicture = willStart;
-    _pipController = nil;
-    
+
     if (willStart) {
-        // "0.2 seconds" is a magic number. But it is the same as the library's code. https://github.com/jhomlala/betterplayer/blob/f6a77cf6fbb515f01aa9fb459b2ee739de3e724c/ios/Classes/BetterPlayer.m#L647
-        // It is waiting to release the previous _pipController.
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)),
-                       dispatch_get_main_queue(), ^{
-            [self setupPipController];
-        });
+        if (_pipController) {
+            _pipController.canStartPictureInPictureAutomaticallyFromInline = true;
+        } else {
+            // "0.2 seconds" is a magic number. But it is the same as the library's code. https://github.com/jhomlala/betterplayer/blob/f6a77cf6fbb515f01aa9fb459b2ee739de3e724c/ios/Classes/BetterPlayer.m#L647
+            // It is waiting to release the previous _pipController.
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)),
+                           dispatch_get_main_queue(), ^{
+                [self setupPipController];
+            });
+        }
+    } else {
+        _pipController.canStartPictureInPictureAutomaticallyFromInline = false;
     }
 }
 
@@ -789,7 +803,8 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     [self setIsPipMode:false];
     [self hideBlackCoverView];
     [self hideLimitedPlanCoverAfterPipCompletelyGone];
-    
+    _pipController = nil;
+
     bool wasPlaying = _isPlaying;
     if (_eventSink != nil) {
         _eventSink(@{@"event" : @"exitingPIP",
