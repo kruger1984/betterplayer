@@ -44,6 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic) bool isPremiumBannerDisplay;
 @property(nonatomic) bool isPipMode;
 @property(nonatomic) id timeObserverId;
+@property(nonatomic) UIView* pipBackgroundCoverView;
 - (void)play;
 - (void)pause;
 - (void)setIsLooping:(bool)isLooping;
