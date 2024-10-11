@@ -49,6 +49,7 @@ int _seekPosition;
         AVPlayerLayer *playerLayer = playerView.playerLayer;
         if (playerLayer) {
             _pipController.contentSource = [[AVPictureInPictureControllerContentSource alloc] initWithPlayerLayer:playerLayer];
+            _pipController.canStartPictureInPictureAutomaticallyFromInline = false;
         }
     }
 
@@ -754,20 +755,17 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 - (void)willStartPictureInPicture: (bool) willStart
 {
     self._willStartPictureInPicture = willStart;
+    if (_pipController) {
+        _pipController.canStartPictureInPictureAutomaticallyFromInline = willStart;
+    }
 
     if (willStart) {
-        if (_pipController) {
-            _pipController.canStartPictureInPictureAutomaticallyFromInline = true;
-        } else {
-            // "0.2 seconds" is a magic number. But it is the same as the library's code. https://github.com/jhomlala/betterplayer/blob/f6a77cf6fbb515f01aa9fb459b2ee739de3e724c/ios/Classes/BetterPlayer.m#L647
-            // It is waiting to release the previous _pipController.
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)),
-                           dispatch_get_main_queue(), ^{
-                [self setupPipController];
-            });
-        }
-    } else {
-        _pipController.canStartPictureInPictureAutomaticallyFromInline = false;
+        // "0.2 seconds" is a magic number. But it is the same as the library's code. https://github.com/jhomlala/betterplayer/blob/f6a77cf6fbb515f01aa9fb459b2ee739de3e724c/ios/Classes/BetterPlayer.m#L647
+        // It is waiting to release the previous _pipController.
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)),
+                       dispatch_get_main_queue(), ^{
+            [self setupPipController];
+        });
     }
 }
 
@@ -803,6 +801,8 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     [self setIsPipMode:false];
     [self hideBlackCoverView];
     [self hideLimitedPlanCoverAfterPipCompletelyGone];
+
+    // Prevent showing PIP placeholder
     _pipController = nil;
 
     bool wasPlaying = _isPlaying;
