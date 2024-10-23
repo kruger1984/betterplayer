@@ -45,15 +45,6 @@ int _seekPosition;
     BetterPlayerView *playerView = [[BetterPlayerView alloc] initWithFrame:CGRectZero];
     playerView.player = _player;
     self._betterPlayerView = playerView;
-
-    if (_pipController) {
-        AVPlayerLayer *playerLayer = playerView.playerLayer;
-        if (playerLayer) {
-            _pipController.contentSource = [[AVPictureInPictureControllerContentSource alloc] initWithPlayerLayer:playerLayer];
-            _pipController.canStartPictureInPictureAutomaticallyFromInline = false;
-        }
-    }
-
     return playerView;
 }
 
@@ -712,8 +703,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
         AVPlayerLayer *playerLayer = self._betterPlayerView.playerLayer;
         if (!_pipController && playerLayer && [AVPictureInPictureController isPictureInPictureSupported]) {
-            AVPictureInPictureControllerContentSource *contentSource = [[AVPictureInPictureControllerContentSource alloc] initWithPlayerLayer:playerLayer];
-            _pipController = [[AVPictureInPictureController alloc] initWithContentSource: contentSource];
+            _pipController = [[AVPictureInPictureController alloc] initWithPlayerLayer: playerLayer];
             if (@available(iOS 14.2, *)) {
                 _pipController.canStartPictureInPictureAutomaticallyFromInline = true;
             }
@@ -925,6 +915,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)resetPipController {
+    // use `playerLayer` from `_player` instead of `_pipController.contentSource.playerLayer` to reset `pipController`.
     AVPlayerLayer *playerLayer = [AVPlayerLayer playerLayerWithPlayer:_player];
     if (!playerLayer) {
         return;
