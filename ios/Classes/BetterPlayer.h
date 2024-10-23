@@ -76,6 +76,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)hideLimitedPlanCoverViewInPIP;
 - (void)showLimitedBlackCoverView;
 - (void)hideLimitedBlackCoverView;
+- (void)resetPipController;
 - (int64_t)absolutePosition;
 - (int64_t) FLTCMTimeToMillis:(CMTime) time;
 

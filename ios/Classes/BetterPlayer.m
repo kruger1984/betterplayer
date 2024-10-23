@@ -756,18 +756,22 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 - (void)willStartPictureInPicture: (bool) willStart
 {
     self._willStartPictureInPicture = willStart;
-    if (_pipController) {
-        _pipController.canStartPictureInPictureAutomaticallyFromInline = willStart;
-        return;
-    }
 
     if (willStart) {
         // "0.2 seconds" is a magic number. But it is the same as the library's code. https://github.com/jhomlala/betterplayer/blob/f6a77cf6fbb515f01aa9fb459b2ee739de3e724c/ios/Classes/BetterPlayer.m#L647
         // It is waiting to release the previous _pipController.
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)),
                        dispatch_get_main_queue(), ^{
-            [self setupPipController];
+            if (_pipController) {
+                [self updatePipController];
+            } else {
+                [self setupPipController];
+            }
         });
+    } else {
+        if (_pipController) {
+            _pipController.canStartPictureInPictureAutomaticallyFromInline = false;
+        }
     }
 }
 
@@ -866,17 +870,19 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         return;
     }
 
-    [self._betterPlayerView addSubview:_limitedBlackCoverView];
+    UIView *betterPlayerSuperview = self._betterPlayerView.superview;
 
-    if ([self hasCommonConstraintsBetweenTwoViews:self._betterPlayerView andView2:_limitedBlackCoverView]) {
+    [betterPlayerSuperview addSubview:_limitedBlackCoverView];
+
+    if ([self hasCommonConstraintsBetweenTwoViews:betterPlayerSuperview andView2:_limitedBlackCoverView]) {
         return;
     }
 
     [NSLayoutConstraint activateConstraints:@[
-        [_limitedBlackCoverView.topAnchor constraintEqualToAnchor:self._betterPlayerView.topAnchor],
-        [_limitedBlackCoverView.bottomAnchor constraintEqualToAnchor:self._betterPlayerView.bottomAnchor],
-        [_limitedBlackCoverView.leadingAnchor constraintEqualToAnchor:self._betterPlayerView.leadingAnchor],
-        [_limitedBlackCoverView.trailingAnchor constraintEqualToAnchor:self._betterPlayerView.trailingAnchor],
+        [_limitedBlackCoverView.topAnchor constraintEqualToAnchor:betterPlayerSuperview.topAnchor],
+        [_limitedBlackCoverView.bottomAnchor constraintEqualToAnchor:betterPlayerSuperview.bottomAnchor],
+        [_limitedBlackCoverView.leadingAnchor constraintEqualToAnchor:betterPlayerSuperview.leadingAnchor],
+        [_limitedBlackCoverView.trailingAnchor constraintEqualToAnchor:betterPlayerSuperview.trailingAnchor],
     ]];
 }
 
@@ -915,6 +921,42 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 - (void) hidePIPPlayerPlaceholderView {
     if (_pipPlayerPlaceholderView) {
         [_pipPlayerPlaceholderView removeFromSuperview];
+    }
+}
+
+- (void)resetPipController {
+    AVPlayerLayer *playerLayer = [AVPlayerLayer playerLayerWithPlayer:_player];
+    if (!playerLayer) {
+        return;
+    }
+
+    AVPictureInPictureControllerContentSource *contentSource = [[AVPictureInPictureControllerContentSource alloc] initWithPlayerLayer:playerLayer];
+    if (_pipController) {
+        _pipController.contentSource = contentSource;
+    } else {
+        _pipController = [[AVPictureInPictureController alloc] initWithContentSource: contentSource];
+    }
+
+    _pipController.canStartPictureInPictureAutomaticallyFromInline = false;
+}
+
+- (void)updatePipController {
+    if (@available(iOS 9.0, *)) {
+        [[AVAudioSession sharedInstance] setActive: YES error: nil];
+        [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
+        AVPlayerLayer *playerLayer = self._betterPlayerView.playerLayer;
+        if (_pipController && playerLayer && [AVPictureInPictureController isPictureInPictureSupported]) {
+            if (_pipController.contentSource.playerLayer != playerLayer) {
+                _pipController.contentSource = [[AVPictureInPictureControllerContentSource alloc] initWithPlayerLayer:playerLayer];
+            }
+            if (@available(iOS 14.2, *)) {
+                _pipController.canStartPictureInPictureAutomaticallyFromInline = true;
+            }
+            _pipController.delegate = self;
+            [self setPipSeekButtonsHidden:_isLiveStream];
+        }
+    } else {
+        // Fallback on earlier versions
     }
 }
 
