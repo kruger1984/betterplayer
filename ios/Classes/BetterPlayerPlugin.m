@@ -389,6 +389,9 @@ bool _isCommandCenterButtonsEnabled = true;
         int64_t textureId = ((NSNumber*)argsMap[@"textureId"]).unsignedIntegerValue;
         BetterPlayer* player = _players[@(textureId)];
         if ([@"setDataSource" isEqualToString:call.method]) {
+            if (!player.isPipMode) {
+                [player resetPipController];
+            }
             [[NSNotificationCenter defaultCenter] removeObserver:self];
             [player clear];
             // This call will clear cached frame because we will return transparent frame

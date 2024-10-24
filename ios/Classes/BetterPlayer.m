@@ -26,6 +26,7 @@ int _seekPosition;
     [self initBlackCoverView];
     [self initLimitedPlanCoverView];
     [self initLimitedBlackCoverView];
+    [self initPIPPlayerPlaceholderView];
     NSAssert(self, @"super init cannot be nil");
     _isInitialized = false;
     _isPlaying = false;
@@ -745,15 +746,22 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 - (void)willStartPictureInPicture: (bool) willStart
 {
     self._willStartPictureInPicture = willStart;
-    _pipController = nil;
-    
+
     if (willStart) {
         // "0.2 seconds" is a magic number. But it is the same as the library's code. https://github.com/jhomlala/betterplayer/blob/f6a77cf6fbb515f01aa9fb459b2ee739de3e724c/ios/Classes/BetterPlayer.m#L647
         // It is waiting to release the previous _pipController.
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)),
                        dispatch_get_main_queue(), ^{
-            [self setupPipController];
+            if (_pipController) {
+                [self updatePipController];
+            } else {
+                [self setupPipController];
+            }
         });
+    } else {
+        if (_pipController) {
+            _pipController.canStartPictureInPictureAutomaticallyFromInline = false;
+        }
     }
 }
 
@@ -777,9 +785,11 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 #if TARGET_OS_IOS
 - (void)pictureInPictureControllerDidStopPictureInPicture:(AVPictureInPictureController *)pictureInPictureController  API_AVAILABLE(ios(9.0)){
     [self disablePictureInPicture];
+    [self hidePIPPlayerPlaceholderView];
 }
 
 - (void)pictureInPictureControllerDidStartPictureInPicture:(AVPictureInPictureController *)pictureInPictureController  API_AVAILABLE(ios(9.0)){
+    [self showPIPPlayerPlaceholderView];
     if (_eventSink != nil) {
         _eventSink(@{@"event" : @"pipStart"});
     }
@@ -789,7 +799,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     [self setIsPipMode:false];
     [self hideBlackCoverView];
     [self hideLimitedPlanCoverAfterPipCompletelyGone];
-    
+
     bool wasPlaying = _isPlaying;
     if (_eventSink != nil) {
         _eventSink(@{@"event" : @"exitingPIP",
@@ -850,18 +860,95 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         return;
     }
 
-    [self._betterPlayerView addSubview:_limitedBlackCoverView];
+    UIView *betterPlayerSuperview = self._betterPlayerView.superview;
 
-    if ([self hasCommonConstraintsBetweenTwoViews:self._betterPlayerView andView2:_limitedBlackCoverView]) {
+    [betterPlayerSuperview addSubview:_limitedBlackCoverView];
+
+    if ([self hasCommonConstraintsBetweenTwoViews:betterPlayerSuperview andView2:_limitedBlackCoverView]) {
         return;
     }
 
     [NSLayoutConstraint activateConstraints:@[
-        [_limitedBlackCoverView.topAnchor constraintEqualToAnchor:self._betterPlayerView.topAnchor],
-        [_limitedBlackCoverView.bottomAnchor constraintEqualToAnchor:self._betterPlayerView.bottomAnchor],
-        [_limitedBlackCoverView.leadingAnchor constraintEqualToAnchor:self._betterPlayerView.leadingAnchor],
-        [_limitedBlackCoverView.trailingAnchor constraintEqualToAnchor:self._betterPlayerView.trailingAnchor],
+        [_limitedBlackCoverView.topAnchor constraintEqualToAnchor:betterPlayerSuperview.topAnchor],
+        [_limitedBlackCoverView.bottomAnchor constraintEqualToAnchor:betterPlayerSuperview.bottomAnchor],
+        [_limitedBlackCoverView.leadingAnchor constraintEqualToAnchor:betterPlayerSuperview.leadingAnchor],
+        [_limitedBlackCoverView.trailingAnchor constraintEqualToAnchor:betterPlayerSuperview.trailingAnchor],
     ]];
+}
+
+- (void) hideLimitedBlackCoverView {
+    if (_limitedBlackCoverView) {
+        [_limitedBlackCoverView removeFromSuperview];
+    }
+}
+
+- (void) initPIPPlayerPlaceholderView {
+    _pipPlayerPlaceholderView = NULL;
+    _pipPlayerPlaceholderView = [[UIView alloc] init];
+    _pipPlayerPlaceholderView.translatesAutoresizingMaskIntoConstraints = false;
+    _pipPlayerPlaceholderView.backgroundColor = [UIColor blackColor];
+}
+
+- (void) showPIPPlayerPlaceholderView {
+    if (self._betterPlayerView == nil) {
+        return;
+    }
+    UIView *betterPlayerSuperview = self._betterPlayerView.superview;
+
+    [betterPlayerSuperview addSubview:_pipPlayerPlaceholderView];
+    if ([self hasCommonConstraintsBetweenTwoViews:betterPlayerSuperview andView2:_pipPlayerPlaceholderView]) {
+        return;
+    }
+
+    [NSLayoutConstraint activateConstraints:@[
+        [_pipPlayerPlaceholderView.topAnchor constraintEqualToAnchor:betterPlayerSuperview.topAnchor],
+        [_pipPlayerPlaceholderView.bottomAnchor constraintEqualToAnchor:betterPlayerSuperview.bottomAnchor],
+        [_pipPlayerPlaceholderView.leadingAnchor constraintEqualToAnchor:betterPlayerSuperview.leadingAnchor],
+        [_pipPlayerPlaceholderView.trailingAnchor constraintEqualToAnchor:betterPlayerSuperview.trailingAnchor],
+    ]];
+}
+
+- (void) hidePIPPlayerPlaceholderView {
+    if (_pipPlayerPlaceholderView) {
+        [_pipPlayerPlaceholderView removeFromSuperview];
+    }
+}
+
+- (void)resetPipController {
+    // use `playerLayer` from `_player` instead of `_pipController.contentSource.playerLayer` to reset `pipController`.
+    AVPlayerLayer *playerLayer = [AVPlayerLayer playerLayerWithPlayer:_player];
+    if (!playerLayer) {
+        return;
+    }
+
+    AVPictureInPictureControllerContentSource *contentSource = [[AVPictureInPictureControllerContentSource alloc] initWithPlayerLayer:playerLayer];
+    if (_pipController) {
+        _pipController.contentSource = contentSource;
+    } else {
+        _pipController = [[AVPictureInPictureController alloc] initWithContentSource: contentSource];
+    }
+
+    _pipController.canStartPictureInPictureAutomaticallyFromInline = false;
+}
+
+- (void)updatePipController {
+    if (@available(iOS 9.0, *)) {
+        [[AVAudioSession sharedInstance] setActive: YES error: nil];
+        [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
+        AVPlayerLayer *playerLayer = self._betterPlayerView.playerLayer;
+        if (_pipController && playerLayer && [AVPictureInPictureController isPictureInPictureSupported]) {
+            if (_pipController.contentSource.playerLayer != playerLayer) {
+                _pipController.contentSource = [[AVPictureInPictureControllerContentSource alloc] initWithPlayerLayer:playerLayer];
+            }
+            if (@available(iOS 14.2, *)) {
+                _pipController.canStartPictureInPictureAutomaticallyFromInline = true;
+            }
+            _pipController.delegate = self;
+            [self setPipSeekButtonsHidden:_isLiveStream];
+        }
+    } else {
+        // Fallback on earlier versions
+    }
 }
 
 - (BOOL)hasCommonConstraintsBetweenTwoViews:(UIView *)view1 andView2:(UIView *)view2 {
@@ -870,12 +957,6 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     }]];
 
     return commonConstraints.count > 0;
-}
-
-- (void) hideLimitedBlackCoverView {
-    if (_limitedBlackCoverView) {
-        [_limitedBlackCoverView removeFromSuperview];
-    }
 }
 
 - (void)setIsPremiumBannerDisplay:(BOOL) isDisplay {
