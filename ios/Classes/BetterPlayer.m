@@ -856,7 +856,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void) showLimitedBlackCoverView {
-    if (self._betterPlayerView == nil) {
+    if (self._betterPlayerView.superview == nil) {
         return;
     }
 
@@ -890,7 +890,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void) showPIPPlayerPlaceholderView {
-    if (self._betterPlayerView == nil) {
+    if (self._betterPlayerView.superview == nil) {
         return;
     }
     UIView *betterPlayerSuperview = self._betterPlayerView.superview;
