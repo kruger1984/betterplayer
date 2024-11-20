@@ -293,7 +293,16 @@ bool _remoteCommandsInitialized = false;
         [self onPlayerSetup:player result:result];
     } else {
         NSDictionary* argsMap = call.arguments;
-        int64_t textureId = ((NSNumber*)argsMap[@"textureId"]).unsignedIntegerValue;
+        if (!argsMap[@"textureId"]) {
+           NSLog(@"BetterPlayer error: textureId is missing for method: %@", call.method);
+           return;
+        }
+        NSNumber *textureIdNum = argsMap[@"textureId"];
+        if (![textureIdNum isKindOfClass:[NSNumber class]]) {
+           return;
+        }
+        int64_t textureId = textureIdNum.unsignedIntegerValue;
+
         BetterPlayer* player = _players[@(textureId)];
         if ([@"setDataSource" isEqualToString:call.method]) {
             [player clear];
