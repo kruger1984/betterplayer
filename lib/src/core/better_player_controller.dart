@@ -1294,6 +1294,10 @@ class BetterPlayerController {
     videoPlayerController!.setIsPremiumBannerDisplay(isDisplay);
   }
 
+  void setIsPlayerVideoVisible(bool isVisible) {
+    videoPlayerController!.setIsPlayerVideoVisible(isVisible);
+  }
+
   void setDuration(Duration duration) {
     if (videoPlayerController != null) {
       videoPlayerController!.setDuration(duration);

@@ -24,6 +24,7 @@ int _seekPosition;
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super init];
     [self initBlackCoverView];
+    [self initPlayerCoverView];
     [self initLimitedPlanCoverView];
     [self initLimitedBlackCoverView];
     [self initPIPPlayerPlaceholderView];
@@ -1015,6 +1016,38 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 - (void) hideBlackCoverView {
     if (_blackCoverView) {
         [_blackCoverView removeFromSuperview];
+    }
+}
+
+- (void) initPlayerCoverView {
+    _playerCoverView = NULL;
+    _playerCoverView = [[UIView alloc] init];
+    _playerCoverView.translatesAutoresizingMaskIntoConstraints = false;
+    _playerCoverView.backgroundColor = [UIColor blackColor];
+}
+
+- (void) showPlayerCoverView {
+    if (self._betterPlayerView == nil) {
+        return;
+    }
+
+    [self._betterPlayerView addSubview:_playerCoverView];
+    
+    if ([self hasCommonConstraintsBetweenTwoViews:self._betterPlayerView andView2:_playerCoverView]) {
+        return;
+    }
+
+    [NSLayoutConstraint activateConstraints:@[
+        [_playerCoverView.topAnchor constraintEqualToAnchor:self._betterPlayerView.topAnchor],
+        [_playerCoverView.bottomAnchor constraintEqualToAnchor:self._betterPlayerView.bottomAnchor],
+        [_playerCoverView.leadingAnchor constraintEqualToAnchor:self._betterPlayerView.leadingAnchor],
+        [_playerCoverView.trailingAnchor constraintEqualToAnchor:self._betterPlayerView.trailingAnchor],
+    ]];
+}
+
+- (void) hidePlayerCoverView {
+    if (_playerCoverView) {
+        [_playerCoverView removeFromSuperview];
     }
 }
 

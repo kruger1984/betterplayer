@@ -675,6 +675,11 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     _videoPlayerPlatform.setIsPremiumBannerDisplay(_textureId, isDisplay);
   }
 
+  void setIsPlayerVideoVisible(bool isVisible) {
+    debugPrint('VPC.setIsPlayerVideoVisible: $isVisible');
+    _videoPlayerPlatform.setIsPlayerVideoVisible(_textureId, isVisible);
+  }
+
   static Future clearCache() async {
     return _videoPlayerPlatform.clearCache();
   }

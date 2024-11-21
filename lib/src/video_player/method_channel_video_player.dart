@@ -524,6 +524,17 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
     );
   }
 
+  @override
+  Future<void> setIsPlayerVideoVisible(int? textureId, bool isVisible) {
+    return _channel.invokeMethod<void>(
+      'setIsPlayerVideoVisible',
+      <String, dynamic>{
+        'textureId': textureId,
+        'isVisible': isVisible,
+      },
+    );
+  }
+
   EventChannel _eventChannelFor(int? textureId) {
     return EventChannel('better_player_channel/videoEvents$textureId');
   }
