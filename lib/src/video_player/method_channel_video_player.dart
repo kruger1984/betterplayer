@@ -391,6 +391,11 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
             duration: Duration(milliseconds: map['duration'] as int),
             size: size,
           );
+        case 'platformViewCreated':
+          return VideoEvent(
+            eventType: VideoEventType.platformViewCreated,
+            key: key,
+          );
         case 'completed':
           return VideoEvent(
             eventType: VideoEventType.completed,

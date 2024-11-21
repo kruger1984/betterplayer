@@ -473,6 +473,9 @@ enum VideoEventType {
   /// The video has been initialized.
   initialized,
 
+  /// The platform view has been created.
+  platformViewCreated,
+
   /// The playback has ended.
   completed,
 

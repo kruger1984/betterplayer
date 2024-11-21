@@ -46,6 +46,9 @@ int _seekPosition;
     BetterPlayerView *playerView = [[BetterPlayerView alloc] initWithFrame:CGRectZero];
     playerView.player = _player;
     self._betterPlayerView = playerView;
+    if (_eventSink) {
+        _eventSink(@{@"event" : @"platformViewCreated"});
+    }
     return playerView;
 }
 
