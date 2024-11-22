@@ -391,6 +391,11 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
             duration: Duration(milliseconds: map['duration'] as int),
             size: size,
           );
+        case 'platformViewCreated':
+          return VideoEvent(
+            eventType: VideoEventType.platformViewCreated,
+            key: key,
+          );
         case 'completed':
           return VideoEvent(
             eventType: VideoEventType.completed,
@@ -520,6 +525,17 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
       <String, dynamic>{
         'textureId': textureId,
         'isDisplay': isDisplay,
+      },
+    );
+  }
+
+  @override
+  Future<void> setIsPlayerVideoVisible(int? textureId, bool isVisible) {
+    return _channel.invokeMethod<void>(
+      'setIsPlayerVideoVisible',
+      <String, dynamic>{
+        'textureId': textureId,
+        'isVisible': isVisible,
       },
     );
   }

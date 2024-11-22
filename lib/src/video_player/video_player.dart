@@ -222,6 +222,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           _initializingCompleter.complete(null);
           _applyPlayPause();
           break;
+        case VideoEventType.platformViewCreated:
+          break;
         case VideoEventType.completed:
           value = value.copyWith(isPlaying: false, position: value.duration);
           _timer?.cancel();
@@ -673,6 +675,10 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
   void setIsPremiumBannerDisplay(bool isDisplay) {
     _videoPlayerPlatform.setIsPremiumBannerDisplay(_textureId, isDisplay);
+  }
+
+  void setIsPlayerVideoVisible(bool isVisible) {
+    _videoPlayerPlatform.setIsPlayerVideoVisible(_textureId, isVisible);
   }
 
   static Future clearCache() async {

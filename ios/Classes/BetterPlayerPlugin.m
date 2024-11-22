@@ -614,6 +614,19 @@ bool _isCommandCenterButtonsEnabled = true;
 
                 [player setIsPremiumBannerDisplay:isDisplay];
             }
+        } else if ([@"setIsPlayerVideoVisible" isEqualToString:call.method]){
+            BOOL isVisible = false;
+            id isVisibleObject = [argsMap objectForKey:@"isVisible"];
+            
+            if (isVisibleObject != [NSNull null]) {
+                isVisible = [[argsMap objectForKey:@"isVisible"] boolValue];
+                
+                if (isVisible) {
+                    [player hidePlayerCoverView];
+                } else {
+                    [player showPlayerCoverView];
+                }
+            }
         } else {
             result(FlutterMethodNotImplemented);
         }

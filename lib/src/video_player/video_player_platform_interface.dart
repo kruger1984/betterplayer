@@ -191,6 +191,11 @@ abstract class VideoPlayerPlatform {
     throw UnimplementedError('setIsPremiumBannerDisplay() has not been implemented.');
   }
 
+  Future<void> setIsPlayerVideoVisible(int? textureId, bool isVisible) {
+    throw UnimplementedError(
+        'setIsPlayerVideoVisible() has not been implemented.');
+  }
+
   /// Returns a widget displaying the video with a given textureID.
   Widget buildView(int? textureId) {
     throw UnimplementedError('buildView() has not been implemented.');
@@ -467,6 +472,9 @@ class VideoEvent {
 enum VideoEventType {
   /// The video has been initialized.
   initialized,
+
+  /// The platform view has been created.
+  platformViewCreated,
 
   /// The playback has ended.
   completed,

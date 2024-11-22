@@ -1,6 +1,7 @@
 ///Supported event types
 enum BetterPlayerEventType {
   initialized,
+  platformViewCreated,
   play,
   pause,
   seekTo,

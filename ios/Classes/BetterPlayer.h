@@ -39,6 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic) int overriddenDuration;
 @property(nonatomic) AVPlayerTimeControlStatus lastAvPlayerTimeControlStatus;
 @property(nonatomic) UIView* blackCoverView;
+@property(nonatomic) UIView* playerCoverView;
 @property(nonatomic) UIImageView* limitedPlanCoverView;
 @property(nonatomic) UIView* limitedBlackCoverView;
 @property(nonatomic) UIView* pipPlayerPlaceholderView;
@@ -72,6 +73,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setIsPremiumBannerDisplay:(BOOL) isDisplay;
 - (void)showBlackCoverViewInPIP;
 - (void)hideBlackCoverView;
+- (void)showPlayerCoverView;
+- (void)hidePlayerCoverView;
 - (void)showLimitedPlanCoverViewInPIP;
 - (void)hideLimitedPlanCoverViewInPIP;
 - (void)showLimitedBlackCoverView;
