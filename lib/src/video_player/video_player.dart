@@ -678,7 +678,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   }
 
   void setIsPlayerVideoVisible(bool isVisible) {
-    debugPrint('VPC.setIsPlayerVideoVisible: $isVisible');
     _videoPlayerPlatform.setIsPlayerVideoVisible(_textureId, isVisible);
   }
 
