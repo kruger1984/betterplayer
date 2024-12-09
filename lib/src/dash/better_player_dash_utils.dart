@@ -86,11 +86,11 @@ class BetterPlayerDashUtils {
     final String? language = node.getAttribute('lang');
     final String? mimeType = node.getAttribute('mimeType');
     String? url =
-        node.getElement('Representation')?.getElement('BaseURL')?.text;
+        node.getElement('Representation')?.getElement('BaseURL')?.value;
     if (url?.contains("http") == false) {
       final Uri masterPlaylistUri = Uri.parse(masterPlaylistUrl);
       final pathSegments = <String>[...masterPlaylistUri.pathSegments];
-      pathSegments[pathSegments.length - 1] = url!;
+      pathSegments[pathSegments.length - 1] = url ?? "";
       url = Uri(
               scheme: masterPlaylistUri.scheme,
               host: masterPlaylistUri.host,
@@ -99,7 +99,7 @@ class BetterPlayerDashUtils {
           .toString();
     }
 
-    if (url != null && url.startsWith('//')) {
+    if (true == url?.startsWith('//')) {
       url = 'https:$url';
     }
 

@@ -14,7 +14,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.5
+  cupertino_icons: ^1.0.8
   wakelock_plus: ^1.2.8
   meta: ^1.7.0
   flutter_widget_from_html_core: ^0.15.2
@@ -23,12 +23,14 @@ dependencies:
   collection: ^1.16.0
   xml: ^6.1.0
 
+
 dev_dependencies:
   lint: ^2.0.1
   flutter_test:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
+
 
 flutter:
   plugin:
