@@ -636,7 +636,9 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
 - (void)setSpeed:(double)speed result:(FlutterResult)result {
     _playerRate = speed;
-    _player.rate = _playerRate;
+    if (_isPlaying){
+        _player.rate = _playerRate;
+    }
     result(nil);
 }
 
