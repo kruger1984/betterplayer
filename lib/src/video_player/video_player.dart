@@ -681,10 +681,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     _videoPlayerPlatform.setIsPlayerVideoVisible(_textureId, isVisible);
   }
 
-  void setPlaybackSpeed(double speed) {
-    _videoPlayerPlatform.setPlaybackSpeed(_textureId, speed);
-  }
-
   static Future clearCache() async {
     return _videoPlayerPlatform.clearCache();
   }

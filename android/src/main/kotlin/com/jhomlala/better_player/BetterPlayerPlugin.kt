@@ -439,14 +439,6 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                 result.success(null)
             }
 
-            SET_PLAYBACK_SPEED -> {
-                val speed = call.argument<Double?>(SPEED)
-                if (speed != null) {
-                    player.setPlaybackSpeed(speed)
-                }
-                result.success(null)
-            }
-
             else -> result.notImplemented()
         }
     }
@@ -904,8 +896,6 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         private const val STOP_PRE_CACHE_METHOD = "stopPreCache"
         private val PIP_ASPECT_RATIO = Rational(16, 9)
         const val IS_LIVE_STREAM = "isLiveStream"
-        private const val SET_PLAYBACK_SPEED = "setPlaybackSpeed"
-        private const val SPEED = "speed"
 
         // https://developer.android.com/reference/androidx/core/content/ContextCompat#RECEIVER_NOT_EXPORTED()
         private const val RECEIVER_NOT_EXPORTED = 4

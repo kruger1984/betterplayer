@@ -540,17 +540,6 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
     );
   }
 
-  @override
-  Future<void> setPlaybackSpeed(int? textureId, double speed) {
-    return _channel.invokeMethod<void>(
-      'setPlaybackSpeed',
-      <String, dynamic>{
-        'textureId': textureId,
-        'speed': speed,
-      },
-    );
-  }
-
   EventChannel _eventChannelFor(int? textureId) {
     return EventChannel('better_player_channel/videoEvents$textureId');
   }

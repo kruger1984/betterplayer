@@ -617,23 +617,15 @@ bool _isCommandCenterButtonsEnabled = true;
         } else if ([@"setIsPlayerVideoVisible" isEqualToString:call.method]){
             BOOL isVisible = false;
             id isVisibleObject = [argsMap objectForKey:@"isVisible"];
-
+            
             if (isVisibleObject != [NSNull null]) {
                 isVisible = [[argsMap objectForKey:@"isVisible"] boolValue];
-
+                
                 if (isVisible) {
                     [player hidePlayerCoverView];
                 } else {
                     [player showPlayerCoverView];
                 }
-            }
-        } else if ([@"setPlaybackSpeed" isEqualToString:call.method]){
-            double speed = 1.0;
-            id speedObject = [argsMap objectForKey:@"speed"];
-
-            if (speedObject != [NSNull null]) {
-                speed = [[argsMap objectForKey:@"speed"] doubleValue];
-                [player showPlayerCoverView];
             }
         } else {
             result(FlutterMethodNotImplemented);

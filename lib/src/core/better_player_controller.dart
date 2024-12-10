@@ -1303,10 +1303,6 @@ class BetterPlayerController {
     videoPlayerController!.setIsPlayerVideoVisible(isVisible);
   }
 
-  void setPlaybackSpeed(double speed) {
-    videoPlayerController!.setPlaybackSpeed(speed);
-  }
-
   void setDuration(Duration duration) {
     if (videoPlayerController != null) {
       videoPlayerController!.setDuration(duration);
