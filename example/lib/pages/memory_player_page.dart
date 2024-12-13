@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:better_player/better_player.dart';
+import 'package:better_player_enhanced/better_player.dart';
 import 'package:example/constants.dart';
 import 'package:example/utils.dart';
 import 'package:flutter/material.dart';

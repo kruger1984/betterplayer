@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:better_player/better_player.dart';
+import 'package:better_player_enhanced/better_player.dart';
 import 'package:example/model/video_list_data.dart';
 import 'package:example/pages/reusable_video_list/reusable_video_list_controller.dart';
 import 'package:flutter/material.dart';
