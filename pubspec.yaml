@@ -1,7 +1,7 @@
-name: better_player
+name: better_player_enhanced
 description: Advanced video player. It solves many typical use cases and it's easy to run.
-version: 0.0.84
-homepage: https://github.com/jhomlala/betterplayer
+version: 0.0.1
+homepage: https://github.com/kingace2056/betterplayer
 documentation: https://jhomlala.github.io/betterplayer/
 
 environment:
