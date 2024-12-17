@@ -522,9 +522,9 @@ class BetterPlayerController {
         }
         break;
 
-      default:
+      /*default:
         throw UnimplementedError(
-            "${betterPlayerDataSource.type} is not implemented");
+            "${betterPlayerDataSource.type} is not implemented");*/
     }
     await _initializeVideo();
   }
@@ -1260,7 +1260,7 @@ class BetterPlayerController {
   ///cache started for given [betterPlayerDataSource] then it will be ignored.
   Future<void> stopPreCache(
       BetterPlayerDataSource betterPlayerDataSource) async {
-    return VideoPlayerController?.stopPreCache(betterPlayerDataSource.url,
+    return VideoPlayerController.stopPreCache(betterPlayerDataSource.url,
         betterPlayerDataSource.cacheConfiguration?.key);
   }
 
