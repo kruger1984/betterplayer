@@ -5,7 +5,7 @@ buildscript {
     ext.exoPlayerVersion = "2.19.1"
     ext.lifecycleVersion = "2.8.7"
     ext.annotationVersion = "1.2.0"
-    ext.workVersion = "2.7.0"
+    ext.workVersion = "2.10.0"
     ext.coreVersion = "1.6.0"
     
 
@@ -15,8 +15,8 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.4.0'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.20"
+        classpath 'com.android.tools.build:gradle:8.7.3'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:2.1.0"
     }
 }
 
@@ -31,7 +31,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 34
+    compileSdkVersion 35
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
@@ -66,3 +66,4 @@ android {
 
     namespace 'com.jhomlala.better_player.better_player'
 }
+
