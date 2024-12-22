@@ -5,7 +5,7 @@ buildscript {
     ext.exoPlayerVersion = "2.19.1"
     ext.lifecycleVersion = "2.8.7"
     ext.annotationVersion = "1.2.0"
-    ext.workVersion = "2.10.0"
+    ext.workVersion = "2.7.0"
     ext.coreVersion = "1.6.0"
     
 
